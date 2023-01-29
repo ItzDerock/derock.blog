@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .card-wrapper:hover .card::after {
+    opacity: 1;
+  }
+
+  .card {
+    @apply p-[1px] rounded-md; 
+    /* background-color: rgba(255, 255, 255, 0.1); */
+    background: theme("colors.gray.800");
+  }
+
+  .card:hover::before {
+    opacity: 1;
+  }
+
+  .card::before,
+  .card::after {
+    @apply rounded-md h-full left-0 opacity-0 absolute top-0 transition-all duration-500 w-full;
+    content: "";
+  }
+
+  .card::before {
+    background: radial-gradient(
+      800px circle at var(--mouse-x) var(--mouse-y), 
+      rgba(255, 255, 255, 0.15),
+      transparent 40%
+    );
+
+    z-index: 3;
+  }
+
+  .card::after {
+    background: radial-gradient(
+      600px circle at var(--mouse-x) var(--mouse-y), 
+      rgba(255, 255, 255, 0.3),
+      transparent 40%
+    );
+    
+    z-index: 1;
+  }
+
+  .card-content {
+    /* background-color: rgb(23, 23, 23); */
+    background: theme("colors.card.background");
+    inset: 1px;
+  }
+}
+
+@layer base {
+  html, body {
+    font-family: 'Roboto', sans-serif;
+  }
+}
