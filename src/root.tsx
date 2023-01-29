@@ -83,7 +83,7 @@ export default function Root() {
               <IoGitBranch class="inline-block mr-1" />
 
               Version {
-                import.meta.env.VITE_COMMIT_HASH?.slice(0, 7)
+                import.meta.env.VITE_VERCEL_GIT_COMMIT_SHA?.slice(0, 7)
                 ?? "unknown"
               }
             </a>
