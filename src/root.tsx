@@ -44,6 +44,14 @@ export default function Root() {
         {/* fonts */}
         <Link rel="preconnect" href="https://fonts.bunny.net" />
         <Link href="https://fonts.bunny.net/css?family=ibm-plex-mobo:500|roboto:500" rel="stylesheet" />
+
+        {/* analytics */}
+        <script
+          defer={true}
+          async={true}
+          data-domain="derock.blog"
+          src="https://stats.derock.dev/js/script.js"
+        />
       </Head>
       <Body class="max-w-6xl mx-auto">
         <Suspense>
