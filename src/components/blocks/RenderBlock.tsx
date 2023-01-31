@@ -20,7 +20,7 @@ export default function RenderBlock(props: RenderBlockProps) {
   switch (block.type) {
     case "paragraph":
       return (
-        <p>
+        <p class="text-gray-200">
           <NotionText text={block.paragraph.rich_text} />
         </p>
       )
@@ -81,7 +81,7 @@ export default function RenderBlock(props: RenderBlockProps) {
         : "list-decimal";
 
       return (
-        <li class={`${orderType} ml-4`}>
+        <li class={`${orderType} text-gray-200 ml-4`}>
           <NotionText text={richText} inline />
           <Show when={block.has_children}>
             <ol class={`${orderType} ml-4`}>
