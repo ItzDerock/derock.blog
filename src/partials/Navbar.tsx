@@ -1,4 +1,4 @@
-import { createEffect, For, onCleanup, onMount, Show } from "solid-js";
+import { createEffect, For, onCleanup, onMount } from "solid-js";
 import { A, useLocation } from "solid-start";
 
 const routes = [
@@ -10,10 +10,10 @@ const routes = [
     path: "https://derock.dev/?ref=derock.blog",
     name: "Portfolio",
   },
-  {
-    path: "/contact",
-    name: "Contact",
-  }
+  // {
+  //   path: "/contact",
+  //   name: "Contact",
+  // }
 ];
 
 export default function Navbar() {
