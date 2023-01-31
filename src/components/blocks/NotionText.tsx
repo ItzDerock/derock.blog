@@ -13,7 +13,7 @@ export function NotionText(props: NotionTextProps) {
         const annotations = item.annotations;
 
         // build the class list
-        let classes = "";
+        let classes = "break-words";
 
         // go through the annotations
         if (annotations.bold) classes += " font-bold";
