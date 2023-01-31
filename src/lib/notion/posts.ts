@@ -58,6 +58,7 @@ export async function getPosts() {
       // Return the formatted post
       return {
         id: post.id,
+        modified: (post as PageObjectResponse).last_edited_time,
         ...parsePostProperties(properties, page.results)
       };
     })

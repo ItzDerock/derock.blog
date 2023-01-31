@@ -12,7 +12,8 @@ config();
 // define schema
 export const serverSchema = z.object({
   NOTION_API_KEY: z.string(),
-  NOTION_DATABASE_ID: z.string()
+  NOTION_DATABASE_ID: z.string(),
+  PUBLIC_URL: z.optional(z.string())
 });
 
 // parse
