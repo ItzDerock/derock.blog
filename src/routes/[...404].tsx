@@ -2,28 +2,15 @@ import { A } from "solid-start";
 
 export default function NotFound() {
   return (
-    <main class="text-center mx-auto text-gray-700 p-4">
-      <h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase my-16">
-        Not Found
-      </h1>
+    <main class="text-center mx-auto text-gray-400 p-4">
+      <img src="https://http.cat/404" alt="404" class="mx-auto" />
       <p class="mt-8">
-        Visit{" "}
-        <a
-          href="https://solidjs.com"
-          target="_blank"
-          class="text-sky-600 hover:underline"
-        >
-          solidjs.com
-        </a>{" "}
-        to learn how to build Solid apps.
+        The page you're looking for doesn't exist. Maybe it did exist, but it
+        sure is gone now.
       </p>
       <p class="my-4">
         <A href="/" class="text-sky-600 hover:underline">
-          Home
-        </A>
-        {" - "}
-        <A href="/about" class="text-sky-600 hover:underline">
-          About Page
+          Back home
         </A>
       </p>
     </main>
