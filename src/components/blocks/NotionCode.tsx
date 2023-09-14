@@ -1,4 +1,4 @@
-import { CodeBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints"
+import { CodeBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import hljs from "highlight.js";
 import { createEffect, createSignal, Show } from "solid-js";
 import { NotionText } from "./NotionText";
@@ -7,26 +7,33 @@ import "highlight.js/styles/atom-one-dark.css";
 
 type NotionCodeProps = {
   code: CodeBlockObjectResponse["code"];
-}
+};
 
 export function NotionCode(props: NotionCodeProps) {
-  const content = props.code.rich_text.map(text => text.plain_text).join("\n");
+  const content = props.code.rich_text
+    .map((text) => text.plain_text)
+    .join("\n");
   const [copyState, setCopyState] = createSignal(false);
 
   // highlight the text
-  const highlighted = hljs.highlight(
-    content,
-    { language: props.code.language }
-  );
+  const highlighted = hljs.highlight(content, {
+    language: props.code.language,
+  });
 
   // update copyState on click
   const copy = () => {
-    // copy to clipboard
-    navigator.clipboard.writeText(content);
+    let copytext = content;
 
-    // update copyState
+    // if the language is shell, remove the `$` or `# ` at the start.
+    if (props.code.language === "bash" || props.code.language === "shell") {
+      if (copytext.startsWith("$ ") || copytext.startsWith("# "))
+        copytext = copytext.slice(2);
+    }
+
+    // copy to clipboard
+    navigator.clipboard.writeText(copytext);
     setCopyState(true);
-  }
+  };
 
   // reset copyState after 1 second
   createEffect(() => {
@@ -41,9 +48,7 @@ export function NotionCode(props: NotionCodeProps) {
 
   return (
     <div>
-      <code
-        class="block bg-gray-800 rounded-md p-4 my-4 whitespace-pre relative"
-      >
+      <code class="block bg-gray-800 rounded-md p-4 my-4 whitespace-pre relative">
         <pre
           innerHTML={highlighted.value}
           class="overflow-y-auto leading-snug"
@@ -51,14 +56,11 @@ export function NotionCode(props: NotionCodeProps) {
 
         {/* copy button */}
         <button
-          class="absolute top-0 right-0 m-3 text-gray-400 hover:text-gray-200"
+          class="absolute top-0 right-0 m-3 text-gray-400 hover:text-gray-200 select-none"
           type="button"
           onClick={copy}
         >
-          <Show
-            when={copyState()}
-            fallback={"Copy"}
-          >
+          <Show when={copyState()} fallback={"Copy"}>
             Copied!
           </Show>
         </button>
@@ -71,5 +73,5 @@ export function NotionCode(props: NotionCodeProps) {
         </div>
       </Show>
     </div>
-  )
-};
+  );
+}
