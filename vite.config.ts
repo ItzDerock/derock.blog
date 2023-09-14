@@ -3,12 +3,15 @@ import solid from "solid-start/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [solid({
-    ssr: true,
-    adapter: vercel({
-      prerender: {
-        expiration: 60 * 60 * 24,
-      }
-    })
-  })],
+  plugins: [
+    solid({
+      ssr: true,
+      adapter: vercel({
+        edge: true,
+        prerender: {
+          expiration: 5 * 60,
+        },
+      }),
+    }),
+  ],
 });

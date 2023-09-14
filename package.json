@@ -8,27 +8,27 @@
   "type": "module",
   "devDependencies": {
     "@types/nprogress": "^0.2.0",
-    "autoprefixer": "^10.4.13",
-    "postcss": "^8.4.21",
-    "solid-start-node": "^0.2.15",
-    "tailwindcss": "^3.2.4",
-    "typescript": "^4.9.4",
-    "vite": "^3.2.5"
+    "autoprefixer": "^10.4.15",
+    "postcss": "^8.4.29",
+    "solid-start-node": "^0.3.5",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^4.9.5",
+    "vite": "^4.4.9"
   },
   "dependencies": {
-    "@notionhq/client": "^2.2.3",
-    "@solidjs/meta": "^0.28.2",
-    "@solidjs/router": "^0.7.0",
-    "dotenv": "^16.0.3",
-    "highlight.js": "^11.7.0",
+    "@notionhq/client": "^2.2.13",
+    "@solidjs/meta": "^0.28.6",
+    "@solidjs/router": "^0.8.3",
+    "dotenv": "^16.3.1",
+    "highlight.js": "^11.8.0",
     "nprogress": "^0.2.0",
     "sitemap": "^7.1.1",
-    "solid-icons": "^1.0.4",
-    "solid-js": "^1.6.9",
-    "solid-start": "^0.2.15",
-    "solid-start-vercel": "^0.2.16",
-    "undici": "^5.15.1",
-    "zod": "^3.20.2"
+    "solid-icons": "^1.0.12",
+    "solid-js": "^1.7.11",
+    "solid-start": "^0.2.32",
+    "solid-start-vercel": "^0.3.5",
+    "undici": "^5.24.0",
+    "zod": "^3.22.2"
   },
   "engines": {
     "node": ">=16"
