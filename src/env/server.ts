@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { config } from "dotenv";
+// import { config } from "dotenv";
 
 // raise an error if this somehow gets imported into a browser bundle
 if (typeof window !== "undefined") {
@@ -7,13 +7,13 @@ if (typeof window !== "undefined") {
 }
 
 // load .env file
-config();
+// config();
 
 // define schema
 export const serverSchema = z.object({
   NOTION_API_KEY: z.string(),
   NOTION_DATABASE_ID: z.string(),
-  PUBLIC_URL: z.optional(z.string())
+  PUBLIC_URL: z.optional(z.string()),
 });
 
 // parse

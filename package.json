@@ -3,12 +3,13 @@
   "scripts": {
     "dev": "solid-start dev",
     "build": "solid-start build",
-    "start": "solid-start start"
+    "start": "dotenv-cli solid-start start"
   },
   "type": "module",
   "devDependencies": {
     "@types/nprogress": "^0.2.0",
     "autoprefixer": "^10.4.15",
+    "dotenv-cli": "^7.3.0",
     "postcss": "^8.4.29",
     "solid-start-node": "^0.3.5",
     "tailwindcss": "^3.3.3",
@@ -19,10 +20,9 @@
     "@notionhq/client": "^2.2.13",
     "@solidjs/meta": "^0.28.6",
     "@solidjs/router": "^0.8.3",
-    "dotenv": "^16.3.1",
     "highlight.js": "^11.8.0",
     "nprogress": "^0.2.0",
-    "sitemap": "^7.1.1",
+    "sitemaps": "^2.0.5",
     "solid-icons": "^1.0.12",
     "solid-js": "^1.7.11",
     "solid-start": "^0.3.5",
