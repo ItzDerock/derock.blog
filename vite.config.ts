@@ -12,6 +12,10 @@ export default defineConfig({
           expiration: 5 * 60,
         },
       }),
+
+      islands: false,
+      // @ts-ignore
+      experimental: { islands: false },
     }),
   ],
 });
