@@ -7,14 +7,12 @@ export default defineConfig({
     solid({
       ssr: true,
       adapter: vercel({
-        edge: true,
+        edge: false,
         prerender: {
           expiration: 5 * 60,
         },
       }),
 
-      islands: false,
-      // @ts-ignore
       experimental: { islands: false },
     }),
   ],
