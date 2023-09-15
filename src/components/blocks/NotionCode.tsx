@@ -9,7 +9,7 @@ type NotionCodeProps = {
   code: CodeBlockObjectResponse["code"];
 };
 
-export function NotionCode(props: NotionCodeProps) {
+export default function NotionCode(props: NotionCodeProps) {
   const content = props.code.rich_text
     .map((text) => text.plain_text)
     .join("\n");
