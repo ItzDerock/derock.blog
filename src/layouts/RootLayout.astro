@@ -1,0 +1,17 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+
+interface Props {
+  title: string;
+  description: string;
+}
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={Astro.props.title} description={Astro.props.description} />
+  </head>
+  <body class="mx-auto">
+    <slot />
+  </body>
+</html>

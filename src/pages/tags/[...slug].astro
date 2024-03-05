@@ -1,0 +1,42 @@
+---
+export const prerender = true;
+const { slug } = Astro.params;
+import { getCollection } from "astro:content";
+const blogs = await getCollection("blog");
+
+// aggregate into one object with counts
+// { 'tag': count }
+const tags = blogs
+  .map((blog) => blog.data.tags)
+  .flat()
+  .reduce<Record<string, number>>((result, c) => {
+    var count = result[c] || 0;
+    result[c] = count + 1;
+    return result;
+  }, {});
+
+// let Astro know about all the tags
+export async function getStaticPaths() {
+  const blogs = await getCollection("blog");
+  return [...new Set(blogs.map((blog) => blog.data.tags).flat())].map(
+    (tag) => ({
+      params: { slug: tag },
+    })
+  );
+}
+
+// if no slug, redirect to home
+if (!slug) {
+  return Astro.redirect("/");
+}
+
+// filter all blog posts with the tag
+const allBlogPostsWithTag = await getCollection("blog", (blog) =>
+  blog.data.tags.some((tag) => tag === slug)
+);
+
+// if no blog posts with the tag, redirect to 404
+if (allBlogPostsWithTag.length === 0) {
+  return Astro.redirect("/404");
+}
+---
