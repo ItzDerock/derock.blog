@@ -1,48 +1,35 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getCollection } from "astro:content";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import BlogCard from "../components/cards/BlogCard.astro";
+import SmallBlogCard from "../components/cards/SmallBlogCard.astro";
+import BlogCardsContainer from "../components/solid/BlogCardsContainer";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import RootLayout from "../layouts/RootLayout.astro";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+const posts = (await getCollection("blog")).sort(
+  (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
 );
+
+const featured = posts.pop();
 ---
 
 <!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body class=" bg-gray-950 text-white">
-		<Header />
-		<main>
-			<section>
-				<ul class="space-y-4">
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/post/${post.slug}/`} class="flex flex-row justify-between">
-									<div>
-										<h4>{post.data.title}</h4>
-										<p>
-											<FormattedDate date={post.data.pubDate} />
-										</p>
+<RootLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <Header />
+  <main class="max-w-3xl px-4 mx-auto">
+    <section>
+      <BlogCardsContainer client:load>
+        <h1 class="text-2xl font-bold">Latest Post</h1>
+        {featured && <BlogCard blog={featured} />}
 
-										<!-- <p className>{post.data.description}</p> -->
-									</div>
+        <h1 class="text-2xl font-bold mt-4">Older posts</h1>
+        {posts.map((post) => <SmallBlogCard blog={post} />)}
+      </BlogCardsContainer>
 
-
-									<img width={180} height={90} src={post.data.heroImage} alt="" />
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+      <ul class="space-y-4"></ul>
+    </section>
+  </main>
+  <Footer />
+</RootLayout>

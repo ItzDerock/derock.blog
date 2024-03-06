@@ -1,0 +1,42 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import { format } from "date-fns/format";
+import Card from "./Card.astro";
+
+interface Props {
+  blog: CollectionEntry<"blog">;
+}
+
+const blog = Astro.props.blog;
+const date = format(blog.data.pubDate, "MMM d, yyyy");
+---
+
+<a href={`/post/${blog.slug}`}>
+  <Card>
+    {/* image */}
+    {
+      blog.data.heroImage && (
+        <Image
+          loading="eager"
+          src={blog.data.heroImage}
+          alt={blog.data.title}
+          width={768}
+          height={432}
+          class="w-full h-64 object-cover rounded-md"
+        />
+      )
+    }
+
+    {/* title */}
+    <h2 class="text-xl font-bold mt-2">{blog.data.title}</h2>
+
+    <p class="text-sm text-gray-400">
+      {date}
+      {blog.data.tags.map((tag) => <span class="text-gray-500">#{tag} </span>)}
+    </p>
+
+    {/* description */}
+    <p>{blog.data.description}</p>
+  </Card>
+</a>

@@ -1,0 +1,52 @@
+---
+import { Image } from "astro:assets";
+import { type CollectionEntry } from "astro:content";
+import { format } from "date-fns/format";
+import Card from "./Card.astro";
+
+interface Props {
+  blog: CollectionEntry<"blog">;
+}
+
+const blog = Astro.props.blog;
+const date = format(blog.data.pubDate, "MMM d, yyyy");
+---
+
+<a href={`/post/${blog.slug}`}>
+  <Card>
+    <div class="flex flex-row gap-4 justify-between">
+      <div class="flex-grow-0">
+        <h1 class="text-xl font-bold">{blog.data.title}</h1>
+        <p class="text-sm text-gray-400">
+          {date}
+
+          {
+            blog.data.tags && (
+              <span class="ml-1">
+                {blog.data.tags.map((tag) => (
+                  <span class="text-gray-500">#{tag}</span>
+                ))}
+              </span>
+            )
+          }
+        </p>
+        <p>{blog.data.description}</p>
+      </div>
+
+      {
+        blog.data.heroImage && (
+          <div class="min-w-48 sm:block hidden">
+            <Image
+              src={blog.data.heroImage}
+              alt={blog.data.title}
+              loading="eager"
+              width="192"
+              height="96"
+              class="rounded-md"
+            />
+          </div>
+        )
+      }
+    </div>
+  </Card>
+</a>

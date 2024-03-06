@@ -12,6 +12,12 @@ export default {
         sm: "1rem",
         xl: "1.5rem",
       },
+
+      colors: {
+        card: {
+          background: "#13111c",
+        },
+      },
     },
   },
   plugins: [],

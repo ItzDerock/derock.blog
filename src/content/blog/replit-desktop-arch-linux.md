@@ -3,6 +3,7 @@ title: 'Replit Desktop App'
 description: 'How to install the Replit Desktop App on Arch Linux using debtap'
 pubDate: 'Jul 18, 2023'
 heroImage: '/blog-placeholder-3.jpg'
+tags: ['replit', 'arch-linux']
 ---
 
 Replit provides online IDEs and environments to develop and deploy your applications. Initially, they only offered a web-based IDE, but now they’ve released a [desktop app](https://blog.replit.com/desktop-app)! Unfortunately, this app is only available for Windows, MacOS, and Debian-based Linux distros, so users using other distributions are out of luck. Fortunately, with the power of debtap, it’s possible to repackage the Debian tarball into a pacman package for Arch Linux.

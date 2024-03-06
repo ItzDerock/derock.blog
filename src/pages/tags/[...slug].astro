@@ -1,7 +1,11 @@
 ---
+import { getCollection } from "astro:content";
+import BlogCard from "../../components/cards/BlogCard.astro";
+import BlogCardsContainer from "../../components/solid/BlogCardsContainer";
+import RootLayout from "../../layouts/RootLayout.astro";
+
 export const prerender = true;
 const { slug } = Astro.params;
-import { getCollection } from "astro:content";
 const blogs = await getCollection("blog");
 
 // aggregate into one object with counts
@@ -31,12 +35,48 @@ if (!slug) {
 }
 
 // filter all blog posts with the tag
-const allBlogPostsWithTag = await getCollection("blog", (blog) =>
+let allBlogPostsWithTag = await getCollection("blog", (blog) =>
   blog.data.tags.some((tag) => tag === slug)
 );
 
 // if no blog posts with the tag, redirect to 404
 if (allBlogPostsWithTag.length === 0) {
-  return Astro.redirect("/404");
+  // return Astro.redirect("/404");
+  allBlogPostsWithTag = await getCollection("blog");
 }
+
+// build SEO description
+const description =
+  `Found ${allBlogPostsWithTag.length} posts tagged "${slug}": `
+    .concat(
+      allBlogPostsWithTag
+        .map((blog) => blog.data.title)
+        .join(", ")
+        .concat(".")
+    )
+    .concat(
+      Object.entries(tags)
+        .map(([tag, count]) => `${tag} (${count})`)
+        .join(", ")
+    );
 ---
+
+<RootLayout title={`Posts tagged "${slug}"`} description={description}>
+  <BlogCardsContainer client:load>
+    {
+      allBlogPostsWithTag.map((blog) => (
+        <BlogCard
+          post={{
+            title: blog.data.title,
+            description: blog.data.description,
+            date: blog.data.date,
+            tags: blog.data.tags,
+            slug: blog.slug,
+            image: blog.data.image,
+          }}
+        />
+      ))
+    }
+  </BlogCardsContainer>
+</RootLayout>
+../../components/BlogCard
