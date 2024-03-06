@@ -63,20 +63,7 @@ const description =
 
 <RootLayout title={`Posts tagged "${slug}"`} description={description}>
   <BlogCardsContainer client:load>
-    {
-      allBlogPostsWithTag.map((blog) => (
-        <BlogCard
-          post={{
-            title: blog.data.title,
-            description: blog.data.description,
-            date: blog.data.date,
-            tags: blog.data.tags,
-            slug: blog.slug,
-            image: blog.data.image,
-          }}
-        />
-      ))
-    }
+    {allBlogPostsWithTag.map((blog) => <BlogCard blog={blog} />)}
   </BlogCardsContainer>
 </RootLayout>
 ../../components/BlogCard
