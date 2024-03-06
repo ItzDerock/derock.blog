@@ -1,4 +1,5 @@
 ---
+import { Icon } from "astro-icon/components";
 import type { CollectionEntry } from "astro:content";
 import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
@@ -13,7 +14,26 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 <RootLayout title={title} description={description}>
   <Header />
   <main>
-    <article class="post leading-[1.7]">
+    <!-- <article
+      class="prose leading-[1.7] mx-auto
+      prose-headings:text-black dark:prose-headings:text-white dark:prose-headings:mb-2 prose-headings:leading-tight
+        prose-h1:text-3xl
+        prose-h2:text-2xl
+        prose-h3:text-xl
+        prose-h4:text-lg
+        prose-h5:text-base
+        prose-strong:font-bold prose-em:italic
+        prose-a:text-blue-400 hover:prose-a:text-blue-600
+        prose-p:mb-4
+        prose-code:text-base prose-code:w-full prose-code:bg-gray-800 prose-code:rounded-sm prose-code:px-2 prose-code:py-1 prose-code:box-border
+        prose-img:max-w-full prose-img:h-auto prose-img:rounded-lg
+        prose-table:w-full
+        prose-pre:p-6 prose-pre:rounded-lg
+        prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:pb-5 prose-blockquote:m-0 prose-blockquote:text-base
+      prose-hr:border-t-gray-600
+      text-white"
+    > -->
+    <article class="leading-[1.7]">
       <div class="w-full">
         {
           heroImage && (
@@ -39,11 +59,27 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
               )
             }
           </div>
-          <h1 class="mb-2">{title}</h1>
+          <h1 class="mb-4 text-4xl">{title}</h1>
           <hr />
         </div>
 
-        <slot />
+        <div class="post">
+          <slot />
+        </div>
+
+        <div class="flex flex-row items-center mt-8 justify-between">
+          <a href="/" class="text-blue-400 hover:text-blue-600 leading-none">
+            <Icon name="mdi:arrow-back" size={24} class="inline-block" /> Home
+          </a>
+
+          <!-- to top button -->
+          <a
+            href="#top"
+            class="text-blue-400 hover:text-blue-600l leading-none"
+          >
+            <Icon name="mdi:arrow-up" size={24} class="inline-block" /> Top
+          </a>
+        </div>
       </div>
     </article>
   </main>

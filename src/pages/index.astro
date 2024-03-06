@@ -21,10 +21,10 @@ const featured = posts.pop();
   <main class="max-w-3xl px-4 mx-auto">
     <section>
       <BlogCardsContainer client:load>
-        <h1 class="text-2xl font-bold">Latest Post</h1>
+        <h1 class="text-xl font-bold leading-none">Latest Post</h1>
         {featured && <BlogCard blog={featured} />}
 
-        <h1 class="text-2xl font-bold mt-4">Older posts</h1>
+        <h1 class="text-xl font-bold mt-8 leading-none">Older posts</h1>
         {posts.map((post) => <SmallBlogCard blog={post} />)}
       </BlogCardsContainer>
 

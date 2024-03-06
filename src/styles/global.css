@@ -25,29 +25,10 @@
   font-style: normal;
   font-display: swap;
 }
-/* 
-body {
-  font-family: "Atkinson", sans-serif;
-  margin: 0;
-  padding: 0;
-  text-align: left;
-  background-size: 100% 600px;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  font-size: 20px;
-  line-height: 1.7;
-} */
 
 body {
   @apply text-base;
 }
-
-/* main {
-  width: 720px;
-  max-width: calc(100% - 2em);
-  margin: auto;
-  padding: 3em 1em;
-} */
 
 /* Styles for post content */
 /*
@@ -67,74 +48,60 @@ body {
   }
 
   h1 {
-    font-size: 3.052em;
+    @apply text-4xl mt-8;
   }
 
   h2 {
-    font-size: 2.441em;
+    @apply text-3xl;
   }
 
   h3 {
-    font-size: 1.953em;
+    @apply text-2xl;
   }
 
   h4 {
-    font-size: 1.563em;
+    @apply text-xl;
   }
 
   h5 {
-    font-size: 1.25em;
+    @apply text-lg;
   }
 
   strong,
   b {
-    font-weight: 700;
+    @apply font-bold;
   }
 
   a {
-    color: var(--accent);
-  }
-
-  a:hover {
-    color: var(--accent);
+    @apply text-blue-400 hover:text-blue-500;
   }
 
   p {
-    margin-bottom: 1em;
+    @apply mb-4;
   }
 
   .prose p {
-    margin-bottom: 2em;
+    @apply mb-8;
   }
 
   textarea {
-    width: 100%;
-    font-size: 16px;
-  }
-
-  input {
-    font-size: 16px;
+    @apply w-full text-base;
   }
 
   table {
-    width: 100%;
+    @apply w-full;
   }
 
   img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
+    @apply max-w-full h-auto rounded-lg;
   }
 
   code {
-    padding: 2px 5px;
-    background-color: rgb(var(--gray-light));
-    border-radius: 2px;
+    @apply px-2 py-1 bg-gray-700 text-white rounded-sm;
   }
 
   pre {
-    padding: 1.5em;
-    border-radius: 8px;
+    @apply p-4 rounded-lg mb-4;
   }
 
   pre > code {
@@ -142,18 +109,14 @@ body {
   }
 
   blockquote {
-    border-left: 4px solid var(--accent);
-    padding: 0 0 0 20px;
-    margin: 0px;
-    font-size: 1.333em;
+    @apply border-l-4 border-blue-400 pl-4;
   }
 
   hr {
-    border: none;
-    border-top: 1px solid rgb(var(--gray-light));
+    @apply border-t-gray-400 border-t-2;
   }
 
-  @media (max-width: 720px) {
+  /* @media (max-width: 720px) {
     body {
       font-size: 18px;
     }
@@ -161,5 +124,5 @@ body {
     main {
       padding: 1em;
     }
-  }
+  } */
 }

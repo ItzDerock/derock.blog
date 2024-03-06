@@ -6,13 +6,17 @@ export default {
       sans: ["Atkinson", "sans-serif"],
     },
 
-    extend: {
-      fontSize: {
-        base: "1.25rem",
-        sm: "1rem",
-        xl: "1.5rem",
-      },
+    fontSize: {
+      base: "1.25rem",
+      sm: "1rem",
+      lg: "1.4rem",
+      xl: "1.563em",
+      "2xl": "1.953em",
+      "3xl": "2.441em",
+      "4xl": "3.052em",
+    },
 
+    extend: {
       colors: {
         card: {
           background: "#13111c",
@@ -20,5 +24,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };

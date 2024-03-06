@@ -2,7 +2,7 @@
 title: 'Replit Desktop App'
 description: 'How to install the Replit Desktop App on Arch Linux using debtap'
 pubDate: 'Jul 18, 2023'
-heroImage: '/blog-placeholder-3.jpg'
+heroImage: '/thumbs/replit-desktop-arch-linux.webp'
 tags: ['replit', 'arch-linux']
 ---
 
