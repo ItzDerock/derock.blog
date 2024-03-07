@@ -116,6 +116,10 @@ body {
     @apply border-t-gray-400 border-t-2;
   }
 
+  ol {
+    @apply list-decimal list-inside pl-4 marker:dark:text-gray-400;
+  }
+
   /* @media (max-width: 720px) {
     body {
       font-size: 18px;

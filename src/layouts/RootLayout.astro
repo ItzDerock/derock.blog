@@ -11,7 +11,9 @@ interface Props {
   <head>
     <BaseHead title={Astro.props.title} description={Astro.props.description} />
   </head>
-  <body class="mx-auto dark:bg-gray-950 dark:text-white">
+  <body
+    class="mx-auto min-h-screen dark dark:from-gray-950 dark:to-[#070F2B] dark:bg-gradient-to-br dark:text-white"
+  >
     <slot />
   </body>
 </html>
