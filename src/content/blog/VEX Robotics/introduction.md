@@ -6,11 +6,11 @@ heroImage: '/thumbs/replit-desktop-arch-linux.webp'
 tags: ['vex-robotics']
 ---
 
-One of the most integral part of a VEX Robotics Competition (VRC) team is the programming. A robot without code will not function, and while the barrier for entry has lowered now that VEX offers a block-based programming language, if you want to build something powerful, you will need to learn how to code in a text-based language.
-
-This guide is the first part of a multipart series where I will guide you through the concepts you will need to know to program a successful VRC robot. This guide will cover topics such as Odometry, PID, Boomerang, and more. Prior knowledge to `C++` is recommended, as I will not be explaining the basics of the language.
+Hello! This guide is designed to help VEX Robotics Competition (VRC) teams effectively program their robots and will introduce you to many new concepts related to motion tracking and embedded programming. While VEX offers a block-based programming language for beginners and also a python alternative, this series will focus on the text-based programming in **C++** to unlock the full potential of your robot's capabilities.
 
 # Introduction
+
+If you don't care who I am, [you can skip straight to the table of contents](#tableofcontents) to get started.
 
 👋 My name is Derock from 95993A. If you are outside of Kentucky, you probably have never heard of my team, but throughout my carrer, I have won numerous VEX Think Awards (given to the best programmer) from both a regional and state level. If you are in Kentucky, you may recogonize me as the one with the movie playing robot screen: 
 
