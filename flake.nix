@@ -18,10 +18,12 @@
     devShells = eachSystem (pkgs: {
       default = pkgs.mkShell {
         buildInputs = [
+          pkgs.bun 
           pkgs.nodejs_20
           pkgs.nodePackages.pnpm
           pkgs.nodePackages.typescript
           pkgs.nodePackages.typescript-language-server
+          pkgs.bashInteractive
         ];
       };
     });

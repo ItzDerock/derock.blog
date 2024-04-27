@@ -37,8 +37,6 @@ export default function BlogCardsContainer(props: BlogCardContainerProps) {
   });
 
   return (
-    <div class="grid grid-cols-1 gap-2 card-wrapper lg:px-4">
-      {props.children}
-    </div>
+    <div class="grid grid-cols-1 gap-2 card-wrapper">{props.children}</div>
   );
 }

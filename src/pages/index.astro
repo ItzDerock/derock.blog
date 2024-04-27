@@ -18,8 +18,8 @@ const featured = posts.pop();
 <!doctype html>
 <RootLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <Header />
-  <main class="max-w-3xl px-4 mx-auto">
-    <section>
+  <main>
+    <section class="max-w-3xl mx-auto">
       <BlogCardsContainer client:load>
         <h1 class="text-xl font-bold leading-none">Latest Post</h1>
         {featured && <BlogCard blog={featured} />}

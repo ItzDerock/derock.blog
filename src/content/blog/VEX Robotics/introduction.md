@@ -14,7 +14,9 @@ If you don't care who I am, [you can skip straight to the table of contents](#ta
 
 👋 My name is Derock from 95993A. If you are outside of Kentucky, you probably have never heard of my team, but throughout my carrer, I have won numerous VEX Think Awards (given to the best programmer) from both a regional and state level. If you are in Kentucky, you may recogonize me as the one with the movie playing robot screen: 
 
-<video src="/videos/cars_movie_vex.mp4" controls></video>
+<!-- <video src="/videos/cars_movie_vex.mp4" controls></video> -->
+<!-- load webm fallback to mp4 -->
+<video src="/videos/cars_movie_vex.webm" controls></video>
 
 This just one of the many things I have done with VEX, and shows you the power of programming. I hope to share my knowledge with you, and help you become a better programmer.
 

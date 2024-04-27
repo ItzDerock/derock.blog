@@ -14,26 +14,25 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 <RootLayout title={title} description={description}>
   <Header />
   <main>
-    <!-- <article
-      class="prose leading-[1.7] mx-auto
-      prose-headings:text-black dark:prose-headings:text-white dark:prose-headings:mb-2 prose-headings:leading-tight
-        prose-h1:text-3xl
-        prose-h2:text-2xl
-        prose-h3:text-xl
-        prose-h4:text-lg
-        prose-h5:text-base
-        prose-strong:font-bold prose-em:italic
-        prose-a:text-blue-400 hover:prose-a:text-blue-600
-        prose-p:mb-4
-        prose-code:text-base prose-code:w-full prose-code:bg-gray-800 prose-code:rounded-sm prose-code:px-2 prose-code:py-1 prose-code:box-border
-        prose-img:max-w-full prose-img:h-auto prose-img:rounded-lg
-        prose-table:w-full
-        prose-pre:p-6 prose-pre:rounded-lg
-        prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:pb-5 prose-blockquote:m-0 prose-blockquote:text-base
-      prose-hr:border-t-gray-600
-      text-white"
-    > -->
     <article class="leading-[1.7]">
+      <!-- top header -->
+      <div class="max-w-4xl px-8 m-auto sm:pt-4 text-white">
+        <div class="py-4 text-center leading-none">
+          <div class="mb-4">
+            <FormattedDate date={pubDate} />
+            {
+              updatedDate && (
+                <div class="italic">
+                  Last updated on <FormattedDate date={updatedDate} />
+                </div>
+              )
+            }
+          </div>
+          <h1 class="text-4xl text-balance">{title}</h1>
+        </div>
+      </div>
+
+      <!-- image -->
       <div class="w-full">
         {
           heroImage && (
@@ -47,35 +46,27 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
           )
         }
       </div>
-      <div class="max-w-3xl px-8 m-auto py-4">
-        <div class="mb-4 py-4 text-center leading-none">
-          <div class="mb-2">
-            <FormattedDate date={pubDate} />
-            {
-              updatedDate && (
-                <div class="italic">
-                  Last updated on <FormattedDate date={updatedDate} />
-                </div>
-              )
-            }
-          </div>
-          <h1 class="mb-4 text-4xl">{title}</h1>
-          <hr />
-        </div>
 
+      <hr class="my-8 max-w-4xl mx-16 lg:mx-auto border-gray-500" />
+
+      <!-- content -->
+      <div class="max-w-4xl px-8 m-auto pb-4">
         <div class="post">
           <slot />
         </div>
 
         <div class="flex flex-row items-center mt-8 justify-between">
-          <a href="/" class="text-blue-400 hover:text-blue-600 leading-none">
+          <a
+            href="/"
+            class="text-blue-400 hover:text-blue-600 leading-none flex flex-row items-center gap-1"
+          >
             <Icon name="mdi:arrow-back" size={24} class="inline-block" /> Home
           </a>
 
           <!-- to top button -->
           <a
             href="#top"
-            class="text-blue-400 hover:text-blue-600l leading-none"
+            class="text-blue-400 hover:text-blue-600l leading-none flex flex-row items-center gap-1"
           >
             <Icon name="mdi:arrow-up" size={24} class="inline-block" /> Top
           </a>

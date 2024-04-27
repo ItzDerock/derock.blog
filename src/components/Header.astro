@@ -1,9 +1,20 @@
 ---
-import { SITE_TITLE } from "../consts";
+
 ---
 
 <header>
-  <nav class="py-8 text-center text-2xl">
-    <a href="/">{SITE_TITLE}</a>
+  <nav
+    class="py-8 flex flex-row text-xl max-w-3xl mx-auto items-center leading-none justify-between px-8 md:px-0"
+  >
+    <a href="/" class="flex flex-row items-center gap-2">
+      <img src="/icons/logo_64.webp" alt="Derock's Logo" class="h-10 w-auto" />
+      <span class="hidden sm:block">Derock's Blog</span>
+    </a>
+
+    <div class="flex flex-row items-center gap-4 text-lg text-gray-300">
+      <a href="/">Home</a>
+      <a href="https://derock.dev/?ref=blog">Portfolio</a>
+      <a href="/rss.xml">RSS</a>
+    </div>
   </nav>
 </header>
