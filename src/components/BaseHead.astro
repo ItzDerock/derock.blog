@@ -11,12 +11,7 @@ interface Props {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const {
-  title,
-  description,
-  image = "/blog-placeholder-1.jpg",
-  tags,
-} = Astro.props;
+const { title, description, image = "/thumbs/hero.webp", tags } = Astro.props;
 ---
 
 <!-- Global Metadata -->
@@ -51,6 +46,7 @@ const {
 <meta name="description" content={description} />
 <meta name="author" content={SITE_AUTHOR} />
 <meta name="keywords" content={tags?.join(", ")} />
+<meta name="theme-color" content="#03001C" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />

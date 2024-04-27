@@ -2,7 +2,7 @@
 title: 'VEX Robotics Programming - Introduction'
 description: 'Part one to a multipart series where I will be documenting my experience with VEX Robotics programming for VRC.'
 pubDate: 'Mar 6, 2024'
-heroImage: '/thumbs/replit-desktop-arch-linux.webp'
+heroImage: '/thumbs/vex-robotics-prog-intro.webp'
 tags: ['vex-robotics']
 ---
 
