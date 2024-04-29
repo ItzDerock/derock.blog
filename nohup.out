@@ -1,0 +1,38 @@
+
+> derock-blog-v2@0.0.1 dev /home/derock/Documents/Code/derock.blog
+> astro dev
+
+
+ astro  v4.4.11 ready in 813 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+
+21:44:47 watching for file changes...
+21:44:57 [astro-icon] Loaded icons from fa6-brands, mdi
+21:44:59 [200] /post/science-olympiad-robot-tour 665ms
+21:44:59 [200] /post/science-olympiad-robot-tour 666ms
+21:46:16 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:46:17 [200] /post/science-olympiad-robot-tour 30ms
+21:46:43 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:46:44 [200] /post/science-olympiad-robot-tour 69ms
+21:47:22 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:47:22 [200] /post/science-olympiad-robot-tour 33ms
+21:47:31 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:47:32 [200] /post/science-olympiad-robot-tour 25ms
+21:47:36 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:47:37 [200] /post/science-olympiad-robot-tour 41ms
+21:52:54 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:52:54 [200] /post/science-olympiad-robot-tour 65ms
+21:53:09 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:53:10 [200] /post/science-olympiad-robot-tour 41ms
+21:53:14 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:53:15 [200] /post/science-olympiad-robot-tour 41ms
+21:53:16 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:53:16 [200] /post/science-olympiad-robot-tour 58ms
+21:53:18 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:53:21 [200] /post/science-olympiad-robot-tour 41ms
+21:54:16 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:54:17 [200] /post/science-olympiad-robot-tour 92ms
+21:54:52 [watch] src/content/blog/Science Olympiad Robot Tour.md
+21:54:53 [200] /post/science-olympiad-robot-tour 30ms

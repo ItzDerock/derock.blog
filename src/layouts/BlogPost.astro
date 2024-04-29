@@ -11,7 +11,7 @@ type Props = CollectionEntry<"blog">["data"];
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
-<RootLayout title={title} description={description}>
+<RootLayout meta={{ title: `derock.blog: ${title}`, description, image: heroImage }} >
   <Header />
   <main>
     <article class="leading-[1.7]">
