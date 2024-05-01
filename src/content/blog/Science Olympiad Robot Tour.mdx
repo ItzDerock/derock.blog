@@ -1,0 +1,164 @@
+---
+title: 'Science Olympiad - Robot Tour'
+description: 'Brief overview over how I created and programmed a robot for the 2024 Science Olympiad Robot Tour competition.'
+pubDate: 'April 29, 2024'
+heroImage: '/thumbs/scioly-robot-tour-2024.webp'
+tags: ['robotics']
+---
+import { Image } from 'astro:assets';
+import sciolygrid from '../../images/scioly-grid.webp';
+
+Science Olympiad's Robot Tour throws down a gauntlet: navigate a maze-like
+track, unseen until competition day, while trying to get a time as close as
+possible to what the judges request. Sounds simple... right? Well, turns out
+there's a lot that goes into this problem. In this post, I'll detail my
+approach to this competition.
+
+# 1. Tracking the robot
+
+First, the robot needs to know where it is in the field so it can navigate
+around. This calls for a concept known as Odometry. I'm not going to go into a
+ton of detail in this post about how odometry works and the math behind it all
+(it's very cool!). If you're interested, I'd highly recommend checking out
+[this
+article](https://medium.com/@nahmed3536/wheel-odometry-model-for-differential-drive-robotics-91b85a012299)
+by Ahmed.
+
+For wheel odometry to work, we need two tracking wheels and a way to know the
+heading of the robot. A tracking wheel is basically a wheel that knows how much
+it has turned, we can use an encoder for that job. A quick google search for a
+motor with an encoder yielded me the following: Adafruit's [Geared DC Motor
+with Magnetic Encoder Outputs](https://www.adafruit.com/product/4416).
+
+Next, we need a way for the robot to know which way it is facing. Another
+google search later, and I found the
+[MPU9250](https://www.amazon.com/HiLetgo-Gyroscope-Acceleration-Accelerator-Magnetometer/dp/B01I1J0Z7Y).
+After recieving this sensor and setting it up with an Arduino and the [MPU9250
+Arduino Library](https://www.arduino.cc/reference/en/libraries/mpu9250/), I
+gave the sensor a test. I calibrated the sensor, then turned it 90 degrees. It
+read 90 degrees. Good! I turned it another 90 degrees, it read 160 degrees...
+not great, turning it 90 degrees again, it read 300 degrees. After hours of
+trying different libraries and trying to comprehend the math going on, I gave
+up.
+
+After a more thorough Google search, I landed on the [Adafruit
+BNO085](https://www.adafruit.com/product/4754) which claims to be:
+> "the motion sensor you were looking for: the one that just gives you the
+> directly usable information without requiring you to first consult with a PhD
+> to learn the arcane arts of Sensor Fusion."
+
+Perfect! We've now got the two sensors we need for the robot.
+
+# 2. Movement & Control
+
+In the previous section, I ordered two DC motors with encoders. These motors
+aren't going to spin themselves, so we need to get a Motor Controller or a
+Motor Driver. I opted for the
+[L298N](https://www.amazon.com/Qunqi-Controller-Module-Stepper-Arduino/dp/B014KMHSW6)
+because not only was it very cheap, but it seemed to be quite popular in the
+DIY space.
+
+Lastly, to connect all these pieces together, we need a microcontroller.
+Normally many people opt for an Arduino Uno since they are very versitile, but
+I decided to opt for the Raspberry Pi Pico for the following reasons:
+
+1. Two PIOs (Programmable Input/Output) which run independently from the CPU
+   and can track the encoder ticks without having to interrupt the CPU.
+2. Dual-core processor, which, while not completely necessary, is a very nice
+   to have since I can run the odometry algorithm on one core and handle
+movement on another.
+
+This project could definitely run on an Arduino, but the pico is also way
+cheaper and smaller while providing more features.
+
+# 3. The Programming
+
+The official way to program the RPI-Pico is through their C++ pico-sdk library.
+It has an ecosystem much smaller than the Arduino, so I had to implement a lot
+on my own.
+
+You can check out my [public
+repo](https://github.com/ItzDerock/scioly-robottour-2024-cpp) if you are
+interested in viewing the source code.
+
+## Motor Control
+
+In the second section, I mentioned ordering the L298N. The L298N is a Motor
+*Driver* not a Motor *Controller*. The difference between the two is that a
+Motor Driver is the "dumber" one of the two and solely exists to provide the
+required power to the motor without doing any calculations to make the motor
+hold a set speed. In the case of this competition, it's important to be able to
+control the velocity (eg rotations/sec) of the wheels. To do this, I
+implemented a Motor Controller that combined a PID loop and a feedforward
+controller.
+
+PID is a feedback controller that consists of three components:
+1. Proportion: Responds directly to the error ($\text{target} - \text{actual}$)
+   multiplied by the $K_P$ constant.
+2. Integral: Responds to the buildup of error (aka the integral) multiplied by
+   the $K_I$ constant.
+3. Derivative: Responds to quick changes in the error multiplied by the $K_D$
+   constant. 
+
+By tuning the constants, you can create a system that is able to maintain a
+certain velocity even if there are unexpected weight added onto the motor.
+
+Feedforward is an added layer onto PID that lets the controller predict the
+required change in output when there's a change in the target velocity. PID by
+itself is a purely reactive controller, FF allows for it to quickly respond to
+changes in the setpoint.
+
+![PID with FF](../../images/pid-controller-with-feedforward-diagram.webp)
+
+## Path Generation
+
+On competition day, you will be given 10 minutes to program the robot after
+seeing the field and you are not allowed to test the movements during this
+time, so it's important that inputs are as simple as possible. 
+
+<Image width={600} class="mx-auto" src={sciolygrid} alt="Science Olympiad Grid"
+/>
+
+My idea is to have the user input the coordinates for each grid into an array
+and then the code will translate it into absolute coordinates in centimeters
+where the bottom left corner is (0cm, 0cm). Lastly, the robot can interpolate
+intermediatary points using some cool parametrics and basic algebra: 
+
+$$
+\begin{align}
+ x_n = x_a + \frac{n}{d}(x_b-x_a) \\
+ y_n = y_a + \frac{n}{d}(y_b-y_b)
+\end{align}
+$$
+
+<center> 
+   ($d$ = distance between point a and b, $n$ is some number $0<n<d$)
+</center>
+
+Then we can use an algorithm like [Pure
+Pursuit](https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf)
+to follow the final path. Using plain pure pursuit isn't enough though, as there
+are cases that pure pursuit will struggle in (180deg turns) so you will have to
+add in some logic that spins the robot in place instead of letting pure pursuit
+do a huge circle to complete the 180 turn. 
+
+## Time constraint
+
+The last part of the competition is completing the path so where the elapsed time matches as closely to what the judges want. 
+
+Since we are pregenerating the entire path, we know the distance left that
+needs to be travelled -- simply sum all the distances between the points. We
+can take this and divide it by the remaining time to get the velocity we should
+target. This can be fed into pure pursuit. If we constantly recalculate this,
+we can get a robot that gets exactly the required time. You will need to be
+careful and add some constraints to prevent the robot from stalling if the
+velocity falls lower than what the motor can output. 
+
+This is one of the benefits of using pure-pursuit, as if we were to go the
+naive approach of just chaining `moveDistance(...)` and `turnTo(...)` commands,
+we would at runtime have no clue how much further needs to be travelled.
+
+# Finishing thoughts
+
+So hopefully you now have a good idea on how you can create your own Science
+Olympiad robot tour robot.  

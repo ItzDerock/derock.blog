@@ -61,7 +61,10 @@ const description =
     );
 ---
 
-<RootLayout title={`Posts tagged "${slug}"`} description={description}>
+<RootLayout meta={{
+  title: `Posts tagged ${slug}`
+  description,
+}}>
   <BlogCardsContainer client:load>
     {allBlogPostsWithTag.map((blog) => <BlogCard blog={blog} />)}
   </BlogCardsContainer>

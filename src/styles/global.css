@@ -118,7 +118,7 @@ body {
   }
 
   ol {
-    @apply list-decimal list-inside pl-4 marker:dark:text-gray-400;
+    @apply list-decimal list-inside pl-4 marker:dark:text-gray-400 pb-4;
   }
 
   /* @media (max-width: 720px) {
