@@ -38,9 +38,15 @@ dependencies:
   date-fns:
     specifier: ^3.3.1
     version: 3.3.1
+  mdast-util-to-string:
+    specifier: ^4.0.0
+    version: 4.0.0
   mermaid:
     specifier: ^9.4.3
     version: 9.4.3
+  reading-time:
+    specifier: ^1.5.0
+    version: 1.5.0
   rehype-katex:
     specifier: ^7.0.0
     version: 7.0.0
@@ -70,6 +76,9 @@ devDependencies:
   '@tailwindcss/typography':
     specifier: ^0.5.10
     version: 0.5.10(tailwindcss@3.4.1)
+  '@types/aos':
+    specifier: ^3.0.7
+    version: 3.0.7
   astro-icon:
     specifier: ^1.1.0
     version: 1.1.0
@@ -1048,6 +1057,10 @@ packages:
     dependencies:
       '@types/estree': 1.0.5
     dev: false
+
+  /@types/aos@3.0.7:
+    resolution: {integrity: sha512-sEhyFqvKauUJZDbvAB3Pggynrq6g+2PS4XB3tmUr+mDL1gfDJnwslUC4QQ7/l8UD+LWpr3RxZVR/rHoZrLqZVg==}
+    dev: true
 
   /@types/babel__core@7.20.5:
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -4580,6 +4593,10 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.1
+
+  /reading-time@1.5.0:
+    resolution: {integrity: sha512-onYyVhBNr4CmAxFsKS7bz+uTLRakypIe4R+5A824vBSkQy/hB3fZepoVEf8OVAxzLvK+H/jm9TzpI3ETSm64Kg==}
+    dev: false
 
   /rehype-katex@7.0.0:
     resolution: {integrity: sha512-h8FPkGE00r2XKU+/acgqwWUlyzve1IiOKwsEkg4pDL3k48PiE0Pt+/uLtVHDVkN1yA4iurZN6UES8ivHVEQV6Q==}

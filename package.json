@@ -21,7 +21,9 @@
     "astro": "^4.4.11",
     "astro-diagram": "^0.7.0",
     "date-fns": "^3.3.1",
+    "mdast-util-to-string": "^4.0.0",
     "mermaid": "^9.4.3",
+    "reading-time": "^1.5.0",
     "rehype-katex": "^7.0.0",
     "remark-math": "^6.0.0",
     "solid-js": "^1.8.15",
@@ -33,6 +35,7 @@
     "@iconify-json/fa6-brands": "^1.1.18",
     "@iconify-json/mdi": "^1.1.64",
     "@tailwindcss/typography": "^0.5.10",
+    "@types/aos": "^3.0.7",
     "astro-icon": "^1.1.0",
     "postcss-nesting": "^12.0.4",
     "prettier": "^3.2.5"
