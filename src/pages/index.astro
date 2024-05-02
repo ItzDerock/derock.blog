@@ -7,16 +7,17 @@ import SmallBlogCard from "../components/cards/SmallBlogCard.astro";
 import BlogCardsContainer from "../components/solid/BlogCardsContainer";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import RootLayout from "../layouts/RootLayout.astro";
+import "aos/dist/aos.css";
 
 const posts = (await getCollection("blog")).sort(
-  (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
 );
 
-const featured = posts.pop();
+const featured = posts.shift();
 ---
 
 <!doctype html>
-<RootLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<RootLayout meta={{ title: SITE_TITLE, description: SITE_DESCRIPTION }}>
   <Header />
   <main class="px-4">
     <section class="max-w-3xl mx-auto">
@@ -25,11 +26,21 @@ const featured = posts.pop();
         {featured && <BlogCard blog={featured} />}
 
         <h1 class="text-xl font-bold mt-8 leading-none">Older posts</h1>
-        {posts.map((post) => <SmallBlogCard blog={post} />)}
+        {posts.map((post, i) => <SmallBlogCard blog={post} aosDelay={(i + 1) * 150} />)}
       </BlogCardsContainer>
-
-      <ul class="space-y-4"></ul>
     </section>
   </main>
   <Footer />
 </RootLayout>
+<script>
+  import AOS from "aos";
+
+  AOS.init({
+    once: true,
+    disable:
+      /bot|crawler|spider|crawling/i.test(navigator.userAgent) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    duration: 600,
+    easing: "ease-out-sine",
+  });
+</script>

@@ -6,13 +6,18 @@ import Card from "./Card.astro";
 
 interface Props {
   blog: CollectionEntry<"blog">;
+  aosDelay?: number;
 }
 
 const blog = Astro.props.blog;
 const date = format(blog.data.pubDate, "MMM d, yyyy");
 ---
 
-<a href={`/post/${blog.slug}`}>
+<a 
+  href={`/post/${blog.slug}`} 
+  data-aos="fade-up" 
+  data-aos-delay={Astro.props.aosDelay?.toString() ?? "0"}
+>
   <Card>
     <div class="flex flex-row gap-4 justify-between">
       <div class="flex-grow-0">

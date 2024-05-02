@@ -1,15 +1,16 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
+import BaseHead, { type Props as BaseHeadProps } from "../components/BaseHead.astro";
 
 interface Props {
-  title: string;
-  description: string;
+  meta: BaseHeadProps; 
 }
+
+const headProps = Astro.props.meta;
 ---
 
 <html lang="en">
   <head>
-    <BaseHead title={Astro.props.title} description={Astro.props.description} />
+    <BaseHead {...headProps} />
   </head>
   <body
     class="mx-auto min-h-screen dark dark:bg-background dark:text-white px-1 md:px-4"

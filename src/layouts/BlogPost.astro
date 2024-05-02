@@ -6,12 +6,15 @@ import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
 import RootLayout from "./RootLayout.astro";
 
-type Props = CollectionEntry<"blog">["data"];
+type Props = CollectionEntry<"blog">["data"] & {
+  frontmatter: Record<string, any>;
+};
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { minutesRead } = Astro.props.frontmatter;
 ---
 
-<RootLayout title={title} description={description}>
+<RootLayout meta={{ title: `derock.blog: ${title}`, description, image: heroImage }} >
   <Header />
   <main>
     <article class="leading-[1.7]">
@@ -20,6 +23,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
         <div class="py-4 text-center leading-none">
           <div class="mb-4">
             <FormattedDate date={pubDate} />
+            {" "}•{" "}
+            {minutesRead}
+
             {
               updatedDate && (
                 <div class="italic">
