@@ -12,7 +12,10 @@ const blog = Astro.props.blog;
 const date = format(blog.data.pubDate, "MMM d, yyyy");
 ---
 
-<a href={`/post/${blog.slug}`}>
+<a 
+  href={`/post/${blog.slug}`}
+  data-aos="fade-up" 
+>
   <Card>
     {/* image */}
     {

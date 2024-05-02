@@ -120,14 +120,87 @@ body {
   ol {
     @apply list-decimal list-inside pl-4 marker:dark:text-gray-400 pb-4;
   }
+}
 
-  /* @media (max-width: 720px) {
-    body {
-      font-size: 18px;
-    }
+/* Custom AOS distance */
+@media screen {
+  html:not(.no-js) [data-aos="fade-up"] {
+    -webkit-transform: translate3d(0, 10px, 0);
+    transform: translate3d(0, 10px, 0);
+  }
 
-    main {
-      padding: 1em;
-    }
-  } */
+  html:not(.no-js) [data-aos="fade-down"] {
+    -webkit-transform: translate3d(0, -10px, 0);
+    transform: translate3d(0, -10px, 0);
+  }
+
+  html:not(.no-js) [data-aos="fade-right"] {
+    -webkit-transform: translate3d(-10px, 0, 0);
+    transform: translate3d(-10px, 0, 0);
+  }
+
+  html:not(.no-js) [data-aos="fade-left"] {
+    -webkit-transform: translate3d(10px, 0, 0);
+    transform: translate3d(10px, 0, 0);
+  }
+
+  html:not(.no-js) [data-aos="fade-up-right"] {
+    -webkit-transform: translate3d(-10px, 10px, 0);
+    transform: translate3d(-10px, 10px, 0);
+  }
+
+  html:not(.no-js) [data-aos="fade-up-left"] {
+    -webkit-transform: translate3d(10px, 10px, 0);
+    transform: translate3d(10px, 10px, 0);
+  }
+
+  html:not(.no-js) [data-aos="fade-down-right"] {
+    -webkit-transform: translate3d(-10px, -10px, 0);
+    transform: translate3d(-10px, -10px, 0);
+  }
+
+  html:not(.no-js) [data-aos="fade-down-left"] {
+    -webkit-transform: translate3d(10px, -10px, 0);
+    transform: translate3d(10px, -10px, 0);
+  }
+
+  html:not(.no-js) [data-aos="zoom-in-up"] {
+    -webkit-transform: translate3d(0, 10px, 0) scale(0.6);
+    transform: translate3d(0, 10px, 0) scale(0.6);
+  }
+
+  html:not(.no-js) [data-aos="zoom-in-down"] {
+    -webkit-transform: translate3d(0, -10px, 0) scale(0.6);
+    transform: translate3d(0, -10px, 0) scale(0.6);
+  }
+
+  html:not(.no-js) [data-aos="zoom-in-right"] {
+    -webkit-transform: translate3d(-10px, 0, 0) scale(0.6);
+    transform: translate3d(-10px, 0, 0) scale(0.6);
+  }
+
+  html:not(.no-js) [data-aos="zoom-in-left"] {
+    -webkit-transform: translate3d(10px, 0, 0) scale(0.6);
+    transform: translate3d(10px, 0, 0) scale(0.6);
+  }
+
+  html:not(.no-js) [data-aos="zoom-out-up"] {
+    -webkit-transform: translate3d(0, 10px, 0) scale(1.2);
+    transform: translate3d(0, 10px, 0) scale(1.2);
+  }
+
+  html:not(.no-js) [data-aos="zoom-out-down"] {
+    -webkit-transform: translate3d(0, -10px, 0) scale(1.2);
+    transform: translate3d(0, -10px, 0) scale(1.2);
+  }
+
+  html:not(.no-js) [data-aos="zoom-out-right"] {
+    -webkit-transform: translate3d(-10px, 0, 0) scale(1.2);
+    transform: translate3d(-10px, 0, 0) scale(1.2);
+  }
+
+  html:not(.no-js) [data-aos="zoom-out-left"] {
+    -webkit-transform: translate3d(10px, 0, 0) scale(1.2);
+    transform: translate3d(10px, 0, 0) scale(1.2);
+  }
 }
