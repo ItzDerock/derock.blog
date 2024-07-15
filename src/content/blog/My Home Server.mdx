@@ -1,0 +1,32 @@
+---
+title: 'My Home Server'
+description: 'Learn how I host my stuff and why I made those choices.'
+pubDate: 'July 14, 2024'
+heroImage: '/thumbs/scioly-robot-tour-2024.webp'
+tags: ['server']
+---
+
+Running your own home server offers many benefits. First, you can eliminate many subscriptions and do not have to worry about [companies discontinuing](https://killedbygoogle.com/) services — things like Google Drive and Google Photos have self-hostable alternatives. Furthermore, you can run your own game servers for you and your friends. Rather than paying hosting providers upwards of $20/month per game for shared hardware, you can provision your own game servers fairly simply and have full control of resource usage.
+
+For example, I run three gameservers for me and my friends: Minecraft, Palworld, and Satisfactory. Self-hosting this saves me \$49/month (\$588 per year!).
+
+Here's a full list of what I'm looking for in a home server, keep this in mind as many of the choices I made revolve around these requirements:
+- Ability to run my own programs and applications (ie jellyfin, minecraft servers).
+- Ability to run guest virtual machines with any OS (for example, I run MacOS for [bluebubbles](<https://bluebubbles.app/>) and sometimes Windows to run untrusted software).
+- Able to perform typical NAS functions such as creating SMB shares.
+- Something relatively powerful (game servers usually require high single-core performance, and plenty of memory).
+
+# The Hardware
+
+The first two points is why I eliminated any off-the-shelf solution since they often run low-power CPUs with as little RAM as possible. Take the Synology DS920+ for example. This is a very popular off-the-shelf solution, but it only has a quad-core Intel Celeron J4125 with a base clock of 2.0 GHz. This is paired with only 4GB of system memory, and can only be upgraded to 8GB. My MacOS VM, running only bluebubbles, uses 5.85 GB of memory for comparison.
+
+# Software
+
+The system runs [Proxmox VE](<https://www.proxmox.com/en/proxmox-virtual-environment/overview>). This decision wasn't made lightly, I spent a lot of time thinking about the benefits of running Proxmox versus a traditional NAS operating system like TrueNAS. 
+
+
+
+
+A brief introduction of each:
+- Proxmox Virtual Environment (VE), based on Debian, offers a web GUI to manage virtual machines (QEMU & KVM) and containers (LXC).
+- TrueNAS, based on FreeBSD or Debian (for the Core and Scale versions respectively), 
