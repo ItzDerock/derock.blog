@@ -38,6 +38,7 @@ body {
  */
 
 .post {
+
   h1,
   h2,
   h3,
@@ -104,7 +105,7 @@ body {
     @apply p-4 rounded-lg mb-4;
   }
 
-  pre > code {
+  pre>code {
     all: unset;
     @apply text-sm;
   }
@@ -117,8 +118,17 @@ body {
     @apply border-t-gray-400 border-t-2;
   }
 
+  ol,
+  ul {
+    @apply list-inside pl-4 marker:dark:text-gray-400 pb-4;
+  }
+
   ol {
-    @apply list-decimal list-inside pl-4 marker:dark:text-gray-400 pb-4;
+    @apply list-decimal;
+  }
+
+  ul {
+    @apply list-disc;
   }
 }
 
