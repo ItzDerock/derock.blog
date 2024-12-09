@@ -5,17 +5,17 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 const CACHE_TIME = (24 * 60 * 60).toString(); // 1 day
 
 export async function GET(context: APIContext) {
-	const posts = await getCollection('blog');
+  const posts = await getCollection('blog');
 
-	return new Response(JSON.stringify({
-		title: SITE_TITLE,
-		description: SITE_DESCRIPTION,
-		site: context.site,
-		items: posts.map((post) => ({
-			...post.data,
-			link: `/blog/${post.slug}/`,
-		})),
-	}), {
+  return new Response(JSON.stringify({
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    site: context.site,
+    items: posts.map((post) => ({
+      ...post.data,
+      link: `/post/${post.slug}/`,
+    })),
+  }), {
     headers: {
       "Content-Type": "application/json",
 
