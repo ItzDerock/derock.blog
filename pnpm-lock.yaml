@@ -26,6 +26,9 @@ dependencies:
   '@astrojs/tailwind':
     specifier: ^5.1.0
     version: 5.1.0(astro@4.4.11)(tailwindcss@3.4.1)
+  '@solid-primitives/workers':
+    specifier: ^0.3.0
+    version: 0.3.0(solid-js@1.8.15)
   '@types/d3':
     specifier: ^7.4.3
     version: 7.4.3
@@ -85,6 +88,9 @@ devDependencies:
   '@types/aos':
     specifier: ^3.0.7
     version: 3.0.7
+  '@types/web':
+    specifier: ^0.0.197
+    version: 0.0.197
   astro-icon:
     specifier: ^1.1.0
     version: 1.1.0
@@ -1247,6 +1253,14 @@ packages:
     resolution: {integrity: sha512-CxpKLntAi64h3j+TwWqVIQObPTED0FyXLHTTh3MKXtqiQNn2JGcMQQ362LftDbc9kYbDtrksNMNoVmVXzKFYUQ==}
     dev: false
 
+  /@solid-primitives/workers@0.3.0(solid-js@1.8.15):
+    resolution: {integrity: sha512-NdfdHHNn4ut6zWoL/xSAZbIuzdrefwc2jin9Oaa/bI1o1QDKdOBQpR07ig7CzpiVdctyeSk6iE8ab6gnZVSSzQ==}
+    peerDependencies:
+      solid-js: ^1.6.12
+    dependencies:
+      solid-js: 1.8.15
+    dev: false
+
   /@tailwindcss/typography@0.5.10(tailwindcss@3.4.1):
     resolution: {integrity: sha512-Pe8BuPJQJd3FfRnm6H0ulKIGoMEQS+Vq01R6M5aCrFB/ccR/shT+0kXLjouGC1gFLm9hopTFN+DMP0pfwRWzPw==}
     peerDependencies:
@@ -1561,6 +1575,10 @@ packages:
   /@types/unist@3.0.2:
     resolution: {integrity: sha512-dqId9J8K/vGi5Zr7oo212BGii5m3q5Hxlkwy3WpYuKPklmBEvsbMYYyLxAQpSffdLl/gdW0XUpKWFvYmyoWCoQ==}
     dev: false
+
+  /@types/web@0.0.197:
+    resolution: {integrity: sha512-V4sOroWDADFx9dLodWpKm298NOJ1VJ6zoDVgaP+WBb/utWxqQ6gnMzd9lvVDAr/F3ibiKaxH9i45eS0gQPSTaQ==}
+    dev: true
 
   /@types/yauzl@2.10.3:
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}

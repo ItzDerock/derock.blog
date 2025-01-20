@@ -15,6 +15,6 @@ export default defineConfig({
   integrations: [mdx(), sitemap(), tailwind(), solidJs(), icon()],
   markdown: {
     remarkPlugins: [remarkMermaid, remarkMath, remarkReadingTime],
-    rehypePlugins: [rehypeKatex]
-  }
+    rehypePlugins: [rehypeKatex],
+  },
 });
