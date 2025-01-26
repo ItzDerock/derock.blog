@@ -1,4 +1,4 @@
-type PIDConfig = {
+export type PIDConfig = {
   kp: number;
   ki: number;
   kd: number;
@@ -8,30 +8,33 @@ type PIDConfig = {
  * PID, but the calculations happen in a web worker
  */
 export class PID {
-  private static UPDATE_INTERVAL = 20;
+  private static UPDATE_INTERVAL = 50;
   private integral = 0;
   private prevError = 0;
   private interval: number | null = null;
-  private canvas: OffscreenCanvas | null = null;
   private setpoint = 0;
   private position = 0;
 
-  constructor(private config: PIDConfig) {}
-
-  public start(canvas?: OffscreenCanvas) {
-    this.canvas ??= canvas ?? null;
-    if (this.interval) return;
-
-    this.interval = setInterval(
-      this.update.bind(this),
-      PID.UPDATE_INTERVAL
-    ) as unknown as number; // ts is picking up node.js types
-  }
+  constructor(
+    private canvas: OffscreenCanvas,
+    private config: PIDConfig
+  ) {}
 
   public pause() {
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
+      console.log("[PID] Loop paused.");
+    }
+  }
+
+  public start() {
+    if (!this.interval) {
+      console.log("[PID] Loop started.");
+      this.interval = setInterval(
+        this.update.bind(this),
+        PID.UPDATE_INTERVAL
+      ) as unknown as number; // ts is picking up node.js types
     }
   }
 
@@ -53,6 +56,8 @@ export class PID {
         ...config,
       };
     }
+
+    console.log("[PID] Config updated: ", this.config);
   }
 
   private update() {

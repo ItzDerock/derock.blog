@@ -1,39 +1,52 @@
 import { createSignal, onCleanup, createEffect, type Ref } from "solid-js";
 import { createWorker } from "@solid-primitives/workers";
 import { PID } from "./PID";
+import type { PIDMessage, PIDMessageInit } from "./PIDWorker";
 
 const PIDControlPanel = () => {
   let canvasRef!: HTMLCanvasElement;
   let divRef!: HTMLDivElement;
-  const [worker] = createWorker(
-    new PID({
-      kd: 0.1,
-      ki: 0.1,
-      kp: 0.1,
-    })
-  );
+  let [postMessage, setPostMessage] =
+    createSignal<(message: PIDMessage) => void>();
 
   createEffect(() => {
     const canvas = canvasRef.transferControlToOffscreen();
-    // Whenever this element is on screen, start the PID
+    const worker = new Worker(new URL("./PIDWorker.ts", import.meta.url), {
+      type: "module",
+    });
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            console.log(worker);
-            worker.start(canvas);
-          } else {
-            worker.pause();
-          }
-        });
-      },
+    worker.postMessage(
       {
-        root: divRef,
-      }
+        type: "init",
+        canvas,
+        config: {
+          kd: 0.1,
+          ki: 0.1,
+          kp: 0.1,
+        },
+      } satisfies PIDMessageInit,
+      [canvas]
     );
 
+    setPostMessage(() => worker.postMessage.bind(worker));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          worker.postMessage({ type: "start" });
+        } else {
+          worker.postMessage({ type: "pause" });
+        }
+      });
+    });
+    console.log(divRef);
+
     observer.observe(canvasRef);
+
+    onCleanup(() => {
+      observer.unobserve(canvasRef);
+      worker.terminate();
+    });
   });
 
   return (
@@ -69,7 +82,7 @@ const PIDControlPanel = () => {
           //   isControlPanelExpanded() ? "expanded" : ""
           // }`}
         >
-          {["p", "i", "d"].map((component) => (
+          {(["p", "i", "d"] as const).map((component) => (
             <div class="slider-container">
               <span class="slider-label">k{component.toUpperCase()}:</span>
               <input
@@ -79,8 +92,15 @@ const PIDControlPanel = () => {
                 step="0.1"
                 // value={state()[`k${component}`]}
                 oninput={
-                  (e) => false
                   // updatePIDValues(`k${component}`, e.target.value)
+                  (event) => {
+                    postMessage()?.({
+                      type: "configUpdate",
+                      config: {
+                        [`k${component}`]: parseFloat(event.target.value),
+                      },
+                    });
+                  }
                 }
               />
               {/* <span class="value-display">{state()[`k${component}`]}</span> */}
