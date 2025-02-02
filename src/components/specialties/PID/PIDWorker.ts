@@ -6,8 +6,8 @@ import { PID, type PIDConfig } from "./PID";
 
 export type PIDMessageInit = {
   type: "init";
-  canvas: OffscreenCanvas;
-  config: PIDConfig;
+  canvases: ConstructorParameters<typeof PID>[0];
+  config: Partial<PIDConfig>;
 };
 
 export type PIDMessageConfigUpdate = {
@@ -23,11 +23,23 @@ export type PIDMessageStart = {
   type: "start";
 };
 
+export type PIDMessageResize = {
+  type: "resize";
+  width: number;
+  height: number;
+};
+
+export type PIDMessageReset = {
+  type: "reset";
+};
+
 export type PIDMessage =
   | PIDMessageInit
   | PIDMessageConfigUpdate
   | PIDMessagePause
-  | PIDMessageStart;
+  | PIDMessageStart
+  | PIDMessageResize
+  | PIDMessageReset;
 
 let PIDInstance: PID | null = null;
 
@@ -38,7 +50,7 @@ onmessage = (event) => {
       console.warn("PID instance already exists, overwriting");
     }
 
-    PIDInstance = new PID(message.canvas, message.config);
+    PIDInstance = new PID(message.canvases, message.config);
   }
 
   if (!PIDInstance) {
@@ -55,6 +67,15 @@ onmessage = (event) => {
       break;
     case "start":
       PIDInstance.start();
+      break;
+    case "resize":
+      PIDInstance.resize(message.width, message.height);
+      break;
+    case "reset":
+      PIDInstance.destroy();
+      const { config, canvases } = PIDInstance.getConfig();
+      PIDInstance = null;
+      PIDInstance = new PID(canvases, config);
       break;
   }
 };

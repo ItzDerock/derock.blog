@@ -65,10 +65,19 @@ approach the setpoint, the error decreases resulting in the robot slowing down.
 
 [VISAID here kP = 1 kI = 0 kD = 0 ]
 
+<PIDVisualizer
+  client:load
+  initialKp={1}
+  initialKi={0}
+  initialKd={0}
+  hideKi={true}
+  hideKd={true}
+/>
+
 Now, let's implement this:
 
 ```cpp
-int PID:update(float error) {
+int PID::update(float error) {
     // y = kx, where k is the constant, x is the error:
     float p = this->kP * error;
     // our PID currently has no other parts, so just return this:

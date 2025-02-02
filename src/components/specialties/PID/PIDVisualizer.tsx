@@ -1,16 +1,59 @@
-import { createSignal, onCleanup, createEffect, type Ref } from "solid-js";
-import { createWorker } from "@solid-primitives/workers";
-import { PID } from "./PID";
+import { createSignal, onCleanup, createEffect, Show } from "solid-js";
 import type { PIDMessage, PIDMessageInit } from "./PIDWorker";
+import type { PIDConfig } from "./PID";
 
-const PIDControlPanel = () => {
-  let canvasRef!: HTMLCanvasElement;
+const PIDControlPanel = (props: {
+  initialKp?: number;
+  initialKi?: number;
+  initialKd?: number;
+  hideKp?: boolean;
+  hideKi?: boolean;
+  hideKd?: boolean;
+}) => {
+  let graphCanvasRef!: HTMLCanvasElement;
+  let visCanvasRef!: HTMLCanvasElement;
   let divRef!: HTMLDivElement;
   let [postMessage, setPostMessage] =
     createSignal<(message: PIDMessage) => void>();
+  const [isNotSupported, setIsNotSupported] = createSignal<string | null>(null);
+  const initialConfig = {
+    showP: !(props.hideKp ?? false),
+    showI: !(props.hideKi ?? false),
+    showD: !(props.hideKd ?? false),
+    kp: props.initialKp ?? 0.1,
+    ki: props.initialKi ?? 0.1,
+    kd: props.initialKd ?? 0.1,
+  } satisfies Partial<PIDConfig>;
+
+  const toggleGraphComponent = (component: "p" | "i" | "d" | "error") => {
+    return (event: Event) => {
+      // captialize first letter
+      const componentName = (component[0].toUpperCase() +
+        component.slice(1)) as "P" | "I" | "D" | "Error";
+      const checked = (event.target as HTMLInputElement).checked;
+
+      postMessage()?.({
+        type: "configUpdate",
+        config: {
+          [`show${componentName}`]: checked,
+        },
+      });
+    };
+  };
 
   createEffect(() => {
-    const canvas = canvasRef.transferControlToOffscreen();
+    if (!graphCanvasRef.transferControlToOffscreen) {
+      setIsNotSupported("OffscreenCanvas is not supported in this browser.");
+      return;
+    }
+
+    if (!window.Worker) {
+      setIsNotSupported("Web Workers are not supported in this browser.");
+      return;
+    }
+
+    const graphCanvas = graphCanvasRef.transferControlToOffscreen();
+    const visCanvas = visCanvasRef.transferControlToOffscreen();
     const worker = new Worker(new URL("./PIDWorker.ts", import.meta.url), {
       type: "module",
     });
@@ -18,14 +61,13 @@ const PIDControlPanel = () => {
     worker.postMessage(
       {
         type: "init",
-        canvas,
-        config: {
-          kd: 0.1,
-          ki: 0.1,
-          kp: 0.1,
+        canvases: {
+          graph: graphCanvas,
+          vis: visCanvas,
         },
+        config: initialConfig,
       } satisfies PIDMessageInit,
-      [canvas]
+      [graphCanvas, visCanvas]
     );
 
     setPostMessage(() => worker.postMessage.bind(worker));
@@ -39,71 +81,98 @@ const PIDControlPanel = () => {
         }
       });
     });
-    console.log(divRef);
 
-    observer.observe(canvasRef);
+    observer.observe(graphCanvasRef);
 
     onCleanup(() => {
-      observer.unobserve(canvasRef);
+      observer.unobserve(graphCanvasRef);
       worker.terminate();
     });
   });
 
+  // resize the canvas to fit the container
+  createEffect(() => {
+    const resizeCanvas = () => {
+      // subtract 1rem from the parent width to account for padding
+      const rem = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
+
+      postMessage()?.({
+        type: "resize",
+        width: graphCanvasRef.parentElement!.clientWidth - rem * 2,
+        height: 200,
+      });
+    };
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    onCleanup(() => window.removeEventListener("resize", resizeCanvas));
+  });
+
   return (
     <div class="max-w-xl mx-auto p-4" ref={divRef}>
-      <div class="border border-gray-800 rounded-lg p-4 bg-card-background shadow-sm">
-        <canvas ref={canvasRef} width="100%" height="200"></canvas>
+      <div class="border border-gray-800 rounded-lg p-4 bg-card-background shadow-sm relative">
+        <Show when={isNotSupported()}>
+          <div class="inset-0 absolute mt-4">
+            <div class="text-red-500 text-center">
+              {isNotSupported()}
+              <br />
+              Modern browsers released after 2023 should support this feature.
+            </div>
+          </div>
+        </Show>
+        <noscript>
+          <div class="text-red-500 text-center">
+            This feature requires JavaScript to be enabled.
+          </div>
+        </noscript>
 
-        {/* <div class="graph-container mt-4">
-          <svg ref={pidGraphRef} width="100%" height="120"></svg>
-        </div> */}
+        <canvas ref={visCanvasRef} height="60px"></canvas>
+        <canvas ref={graphCanvasRef} height="200px"></canvas>
 
         <div class="mt-4">
           <div class="flex gap-2">
             {["p", "i", "d", "error"].map((component) => (
-              <button
-                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                // onclick={() => toggleComponent(component)}
-              >
-                {component.toUpperCase()}
-              </button>
+              <>
+                <input
+                  type="checkbox"
+                  id={`show-${component}`}
+                  checked={true}
+                  onchange={toggleGraphComponent(
+                    component as "p" | "i" | "d" | "error"
+                  )}
+                />
+                <label for={`show-${component}`}>{component}</label>
+              </>
             ))}
           </div>
           <button
             class="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-            // onclick={toggleControlPanel}
+            onclick={postMessage()?.bind(null, { type: "reset" })}
           >
-            Configure
+            Reset
           </button>
         </div>
 
-        <div
-          class={`control-panel mt-4`}
-          //   isControlPanelExpanded() ? "expanded" : ""
-          // }`}
-        >
+        <div class="mt-4">
           {(["p", "i", "d"] as const).map((component) => (
             <div class="slider-container">
               <span class="slider-label">k{component.toUpperCase()}:</span>
               <input
                 type="range"
                 min="0"
-                max="2"
+                max="10"
                 step="0.1"
-                // value={state()[`k${component}`]}
-                oninput={
-                  // updatePIDValues(`k${component}`, e.target.value)
-                  (event) => {
-                    postMessage()?.({
-                      type: "configUpdate",
-                      config: {
-                        [`k${component}`]: parseFloat(event.target.value),
-                      },
-                    });
-                  }
-                }
+                oninput={(event) => {
+                  postMessage()?.({
+                    type: "configUpdate",
+                    config: {
+                      [`k${component}`]: parseFloat(event.target.value),
+                    },
+                  });
+                }}
               />
-              {/* <span class="value-display">{state()[`k${component}`]}</span> */}
             </div>
           ))}
         </div>
