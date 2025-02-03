@@ -38,7 +38,6 @@ body {
  */
 
 .post {
-
   h1,
   h2,
   h3,
@@ -105,7 +104,7 @@ body {
     @apply p-4 rounded-lg mb-4;
   }
 
-  pre>code {
+  pre > code {
     all: unset;
     @apply text-sm;
   }
@@ -129,6 +128,10 @@ body {
 
   ul {
     @apply list-disc;
+  }
+
+  li > p {
+    @apply whitespace-pre-wrap inline-block align-top pt-1;
   }
 }
 

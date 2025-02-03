@@ -33,6 +33,9 @@ scary, but don't worry, I've created a visualization tool that simulates the
 dynamics of a robot (friction, acceleration, etc) and how the PID algorithm
 affects it.
 
+First, let me introduce the _concept_ behind PID, then I'll explain how to
+leverage it in your robot.
+
 ### To get started, lets define two variables:
 
 - $\text{Setpoint}$ - the target position of the system (the robot)
@@ -230,6 +233,121 @@ have a PID loop!
 
 Scroll back up to the visualizer for the D component. The controls there are
 unlocked so you can type in your own terms and see how the controller reacts!
+
+# Usage
+
+As a prerequisite, you will need to have odometry on your robot. Here's a list
+of articles to help you get started on Odometry:
+
+- For systems with three tracking wheels:
+  [E-bots Pilons Tracking Paper](http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf)
+
+- For systems with two tracking wheels (can be the drivetrain encoders):
+  [Wheel Odometry Model for Differential Drive Robotics](https://medium.com/@nahmed3536/wheel-odometry-model-for-differential-drive-robotics-91b85a012299)
+
+_P.S. If you have an IMU sensor, you can improve accuracy by using the IMU's
+heading for $\Delta\theta$ instead of calculating it based off wheel
+differentials._
+
+Now lets reimagine that senario where you want to move to a certain point
+$(x_{1}, y_{1})$. For this, you want to utilize two PID loops: one for the
+angular error and one for the linear error.
+
+## Angular Error
+
+Angular error references the difference between the robot's current heading and
+the desired heading (i.e. the direction you need to face to end up at your
+setpoint). This can be calculated using an inertial sensor and some
+trigonometry.
+
+Remember that the heading of a robot is 0 when it's facing the positive y-axis,
+and increases clockwise. Trig functions, on the other hand, start at the
+positive x-axis and increase counterclockwise. Therefore, we need to offset the
+heading by $\frac{\pi}{2}$ (aka 90 degrees).
+
+$$
+\begin{gather*}
+\text{Target Heading} = \text{atan2}(y_{1} - y_{0}, x_{1} - x_{0}) \\
+\text{Angular Error} = \text{Target Heading} - (\frac{\pi}{2} - \text{Robot Heading})
+\end{gather*}
+$$
+
+_When implementing this, remember to normalize the angular error to be between
+$-\pi$ and $\pi$._
+
+Then, you can input this angular error into the PID loop to get the desired
+output.
+
+## Linear Error
+
+Linear error is the distance between the robot's current position and the
+desired position. You can use the Pythagorean theorem to calculate this:
+
+$$
+\text{Linear Error} = \sqrt{(x_{1} - x_{0})^{2} + (y_{1} - y_{0})^{2}}
+$$
+
+But this will always return a positive value. To get the direction of the error,
+multiply the error by the sign of the cosine of the angular error.
+
+$$
+\text{Linear Error} = \text{Linear Error} \times \text{sign}(\text{cos}(\text{Angular Error}))
+$$
+
+Then, you can input this linear error into the PID loop to get the desired
+output.
+
+## Combining the outputs
+
+Let's call the output from the angular PID controller $angularOutput$ and the
+output from the linear PID controller $linearOutput$. To get the final output
+for the left and right side of the robot, just add or subtract the two outputs:
+
+$$
+\begin{gather*}
+\text{Left Output} = linearOutput - angularOutput \\
+\text{Right Output} = linearOutput + angularOutput
+\end{gather*}
+$$
+
+But this poses a problem if left and/or right outputs exceed the motor's maximum
+power (in PROS, this ranges from [-127, 127] as it's represented by an 8-bit
+integer). To fix this, scale down the outputs proportionally:
+
+```cpp
+#define MAX_SPEED (float)127
+
+void moveTo(Position target) {
+  // do calculations
+  // ...
+
+  // calculate the angular error
+  float leftOutput = linearOutput - angularOutput;
+  float rightOutput = linearOutput + angularOutput;
+
+  // scale down the outputs
+  const float scale =
+    std::max(std::fabs(leftPower), std::fabs(rightPower)) / MAX_SPEED;
+
+  if (scale > 1) {
+    leftOutput /= scale;
+    rightOutput /= scale;
+  }
+
+  // set the motor speeds
+  // ...
+}
+
+```
+
+Similarly, you can create a `turnTo` function that only uses the angular PID and
+sets the linear output to 0. This will make the robot turn in place to face the
+desired heading.
+
+It's also recommended you tune the turnTo function first, since it's only one
+PID loop. If you find that it is turning the incorrect direction and/or settles
+180 degrees off, you can multiply the angular error by -1. Scroll down to the
+tuning section for more information.
 
 # Extras
 
