@@ -2,7 +2,7 @@
 
 {
   env.PUPPETEER_EXECUTABLE_PATH = "${pkgs.chromium}/bin/chromium";
-  packages = [ pkgs.chromium ];
+  packages = with pkgs; [ chromium openssl.dev ];
 
   # https://devenv.sh/languages/
   languages.javascript.enable = true;

@@ -8,6 +8,7 @@ import remarkMermaid from "astro-diagram/remark-mermaid";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { remarkReadingTime } from "./src/plugins/readingTime.mjs";
+import prebundleWorkers from "vite-plugin-prebundle-workers";
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,6 +16,13 @@ export default defineConfig({
   integrations: [mdx(), sitemap(), tailwind(), solidJs(), icon()],
   markdown: {
     remarkPlugins: [remarkMermaid, remarkMath, remarkReadingTime],
-    rehypePlugins: [rehypeKatex]
-  }
+    rehypePlugins: [rehypeKatex],
+  },
+  vite: {
+    plugins: [
+      prebundleWorkers({
+        include: "src/components/specialties/PID/PIDWorker.ts",
+      }),
+    ],
+  },
 });
