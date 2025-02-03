@@ -47,7 +47,8 @@ written or released yet.
 3. Deep dive into PROS: Learn about tasks how to write safe concurrent code.
 4. Odometry: Learn how to set up a basic odometry tracking system to track robot
    position.
-5. PID: Learn how to use PID to control your robot's movement.
+5. [PID](/post/vex-robotics/pid): Learn how to use PID to control your robot's
+   movement.
 6. Boomerang: Things will get a whole lot more curvey here.
 7. LVGL: Learn how to draw on the screen of the V5 brain to create user
    interfaces.

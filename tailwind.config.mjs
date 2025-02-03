@@ -2,10 +2,6 @@
 export default {
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
   theme: {
-    fontFamily: {
-      sans: ["Atkinson", "sans-serif"],
-    },
-
     fontSize: {
       base: "1.2rem",
       sm: "1rem",
@@ -17,6 +13,10 @@ export default {
     },
 
     extend: {
+      fontFamily: {
+        sans: ["Atkinson", "sans-serif"],
+      },
+
       colors: {
         background: "#0A121A",
 

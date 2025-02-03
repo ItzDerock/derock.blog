@@ -4,8 +4,8 @@ description:
   "PID is one of the most fundamental feedback control systems used in robotics.
   This guide will teach you what it is, how it works, and how to implement it in
   your VEX Robotics Competition robot."
-pubDate: "July 18, 2024"
-heroImage: "/thumbs/vex-robotics-prog-intro.webp"
+pubDate: "Feburary 2, 2025"
+heroImage: "/thumbs/vex-robotics-prog-pid.webp"
 tags: ["vex-robotics"]
 ---
 
@@ -21,18 +21,17 @@ feet forward', how would you approach that? The naive approach would be to set
 the motors to full power and wait a few seconds or wait until the odometry data
 tells you the robot has moved 3 feet. But this approach is often inconsistent —
 if your drivetrain isnt _perfectly_ symmetrical, the robot will drift to the
-side or overshoot your target. This is where PID comes in.
+side. Furthermore, when you stop your robot, it has forward momentum and will
+take a non-zero amount of time to slow down, causing you to overshoot your
+target. This is where PID comes in.
 
 PID is a **control algorithm**, a mathmatical way to control the output of a
 system given a criteria. PID consists of three distinct parts that work
 together. The P stands for Proportional, I stands for Integral, and D stands for
 Derivative. If you haven't taken a calculus course yet, those words may sound
-scary, but don't worry, I'll explain everything.
-
-And to make this more visual, I've created a mini PID visualization that you can
-play around with:
-
-<PIDVisualizer client:load />
+scary, but don't worry, I've created a visualization tool that simulates the
+dynamics of a robot (friction, acceleration, etc) and how the PID algorithm
+affects it.
 
 ### To get started, lets define two variables:
 
@@ -59,22 +58,13 @@ $\frac{1}{2}$. We call that $k$ or the constant of proportionality. In a PID
 system, we call it $kP$ to denote that it's for the Proportional part of the
 algorithm.
 
-In PID, the $x$ is the $\text{Error}$, and the $y$ is the system output (aka the
-power to give the motors). So the further you are, the more power, and as you
-approach the setpoint, the error decreases resulting in the robot slowing down.
+In PID, the $x$ axis represents the $\text{Error}$, and the $y$ axis represents
+the system output (in this case, the power to give the motors). So the further
+you are, the larger the $x$ value, and since $kP$ is positive, the larger the
+$y$ value. More output corresponds to more power, and as you approach the
+setpoint, the error decreases resulting in the robot slowing down.
 
-[VISAID here kP = 1 kI = 0 kD = 0 ]
-
-<PIDVisualizer
-  client:load
-  initialKp={1}
-  initialKi={0}
-  initialKd={0}
-  hideKi={true}
-  hideKd={true}
-/>
-
-Now, let's implement this:
+An example implementation would look like this:
 
 ```cpp
 int PID::update(float error) {
@@ -85,9 +75,26 @@ int PID::update(float error) {
 }
 ```
 
+<PIDVisualizer
+  client:load
+  initialKp={1.5}
+  initialKi={0}
+  initialKd={0}
+  hideKi={true}
+  hideKd={true}
+  disableControls={true}
+/>
+
+But observe the green line (representing output). As the robot gets closer to
+the setpoint (yellow line approaching the blue line), the output line decreases,
+causing it to be very slow. When the robot is very close to the setpoint, it
+barely moves at all.
+
+This is where the **I** and **D** come in.
+
 # P**I**D - Integral
 
-Integrals in calculus mean the _area under a curve_.
+In calculus, integrals mean the _area under a curve_.
 
 <center>
   <iframe
@@ -101,14 +108,258 @@ Integrals in calculus mean the _area under a curve_.
 
 In the above graph, the function is graphed in red. The area under that curve is
 marked with blue. If you wanted to find the area under this curve, you would
-have to do some funky integrals, but none of that is required for PID. Instead,
-we can approximate the area by using small rectangles, called a riemmens sum.
+have to do some funky math involving antiderivatives, but none of that is
+required for PID. Instead, we can approximate the area by using small
+rectangles, called a riemmens sum:
+
+<center>
+  <iframe
+    src="https://www.desmos.com/calculator/5mwgsly9j2?embed"
+    width="500"
+    height="300"
+    style="border: 1px solid #ccc; margin-bottom: 1rem;"
+    frameborder="0"
+  ></iframe>
+</center>
+
+In terms of PID, the integral is the sum of all the errors over time, where the
+height of the rectangle is the error, and the width is the time. This makes the
+robot "try harder" to reach the setpoint if it's been off for a while. We take
+this integral and multiply it by a constant $kI$ to get the integral part of the
+PID algorithm.
+
+```cpp
+int PID::update(float error) {
+    // y = kx, where k is the constant, x is the error:
+    float p = this->kP * error;
+
+    // sum of all errors:
+    this->integral += error;
+    float i = this->kI * this->integral;
+
+    // and just add them together:
+    return p + i;
+}
+```
+
+<PIDVisualizer
+  client:load
+  initialKp={0.000001}
+  initialKi={0.05}
+  initialKd={0}
+  hideKd={true}
+  disableControls={true}
+/>
+
+In this example, the $kP$ constant was set to a very small value, so the robot
+barely moves at the start. Over time though, the integral adds up and the robot
+starts to move faster and faster. Great right? But if you watch a little longer,
+you'll see the robot vastly overshoot the setpoint. When the error reaches 0,
+the integral still has a very large value, and the robot will continue to move
+until the integral returns to 0 (by adding negative error).
+
+This causes a sinusoidal motion, where the robot will oscillate around the
+target. This is where the **D** comes in.
+
+# PI**D** - Derivative
+
+Derivatives in calculus are the _rate of change_ of a function, i.e. the slope
+of a function at a given point. For example, velocity (in mph, kph, m/s, etc)
+can be called the derivative of position (in miles, kilometers, meters, etc)
+with respect to time (in hours, seconds, etc).
+
+To approximate a derivative, you find two points on a function, draw a line
+connecting them, and find the slope of that line. The closer the two points, the
+better the approximation.
+
+<center>
+  <iframe
+    src="https://www.desmos.com/calculator/wjg4zy6xbd?embed"
+    width="500"
+    height="300"
+    style="border: 1px solid #ccc; margin-bottom: 1rem;"
+    frameborder="0"
+  ></iframe>
+</center>
+
+In the context of a PID system, the derivative is the rate of change of the
+error with respect to time. In simpler terms, it's how fast the error is
+changing. Normally, the sign of the derivative output in a PID system is
+opposite to the sign of the error, so it acts against the $kP$ term. You can
+think of it as a dampener. This is useful because it can help the robot slow
+down as it approaches the setpoint, preventing overshoot.
+
+```cpp
+int PID::update(float error) {
+    // y = kx, where k is the constant, x is the error:
+    float p = this->kP * error;
+
+    // sum of all errors:
+    this->integral += error;
+    float i = this->kI * this->integral;
+
+    // rate of change of error:
+    float d = this->kD * (error - this->lastError);
+    this->lastError = error;
+
+    // and just add them together:
+    return p + i + d;
+}
+```
+
+<PIDVisualizer client:load initialKp={10} initialKi={0} initialKd={250} />
+
+<center>
+  Try changing the $kD$ constant to 0 and hit the "Reset Position" button. Then,
+  compare how much the robot overshoots the setpoint.
+</center>
 
 # Summary
 
 - P = Proportional, and acts proportionally to the error governed by the $kP$
   constant.
 - I = Integral, and acts with the buildup of error over time, governed by the
-  $kI$ constant. Limited by the $I_max$ constant.
+  $kI$ constant.
 - D = Derivative, and acts with the change of error over a short interval,
   governed by the $kD$ constant.
+
+Take these components, add them up, and recalculate every 10ms or so, and you
+have a PID loop!
+
+# Playground
+
+Scroll back up to the visualizer for the D component. The controls there are
+unlocked so you can type in your own terms and see how the controller reacts!
+
+# Extras
+
+## Other PID Variants
+
+You don't technically need all three components for most applications. For
+example, a lightweight and highly responsive robot with little friction may not
+need the integral and/or derivative term, so you can set those constants to 0.
+
+When you set a constant to 0, the name of the PID algorithm changes. A PID
+system with only the proportional term is called a P controller, or a system
+with the proportional term and the derivative term is called a PD controller.
+Pretty simple.
+
+## Integral Windup
+
+If you are very far from your setpoint, the integral term will build up very
+quickly and cause the robot to severely overshoot the setpoint. To prevent this,
+you can limit the integral to a certain value $I_{max}$.
+
+## Tuning
+
+There are mathematical ways to tune PID controllers, but it requries you to know
+the system's transfer function and a bunch of other parameters. This is totally
+unnecessary for VEX robotics, as you can employ trial and error to get
+acceptable results.
+
+[u/FrickinLazerBeams](https://www.reddit.com/r/matlab/comments/vqk5jc/comment/ietez7k/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button)
+on Reddit has a pretty good explanation:
+
+> If it oscillates, P is too high or D is too low.
+>
+> If it doesn't go to the setpoint or recover from perturbations, P is too low.
+>
+> If it has a small steady-state error, I is too low.
+>
+> **Start with everything zero and then add P until it oscillates. Add some D
+> until it's stable. Then add I until it eliminates steady state errors.**
+>
+> You pretty much think of it as a spring (P) damper (D) mass setup, with an
+> additional term that pushes slightly harder the longer the mass isn't at its
+> target position (I).
+
+## Exit Conditions
+
+Now that you have this feedback loop, when do you stop and break out?
+Introducing: a brief introduction to exit conditions.
+
+If you just check if the error is less than some threshold, the loop may exit
+prematurely when the robot zooms past the setpoint, since that condition would
+be met for a split second.
+
+Instead, you want to check if the error is less than some threshold _and_ the
+robot has been at the setpoint for a certain amount of time. Usually, it's best
+to use two: threshold with a longer time and larger radius, and a second with a
+smaller radius and shorter time. If the robot overshoots, the first, longer
+condition will catch it. But if the robot properly decelerates, both conditions
+can be met in a short amount of time.
+
+Example implementation taken from
+[my own code](https://github.com/ItzDerock/vex-high-stakes/blob/main/src/algorithms/ExitCondition.cpp):
+
+```cpp
+#include "robot/ExitCondition.hpp"
+#include <cmath>
+#include "pros/rtos.hpp"
+
+/**
+ * @brief Create a new Exit Condition
+ *
+ * @param range the range where the countdown is allowed to start
+ * @param time how much time to wait while in range before exiting
+ */
+ExitCondition::ExitCondition(const float range, const int time)
+    : range(range), time(time) {}
+
+/**
+ * @brief whether the exit condition has been met
+ *
+ * @return true exit condition met
+ * @return false exit condition not met
+ */
+bool ExitCondition::getExit() const { return done; }
+
+/**
+ * @brief update the exit condition
+ *
+ * @param input the input for the exit condition
+ * @return true exit condition met
+ * @return false exit condition not met
+ */
+bool ExitCondition::update(const float input) {
+  const int curTime = pros::millis();
+  if (std::fabs(input) > range)
+    startTime = -1;
+  else if (startTime == -1)
+    startTime = curTime;
+  else if (curTime >= startTime + time)
+    done = true;
+  return done;
+}
+
+/**
+ * @brief reset the exit condition timer
+ *
+ */
+void ExitCondition::reset() {
+  startTime = -1;
+  done = false;
+}
+
+void ExitCondition::setExit(const float range, const int time) {
+  this->range = range;
+  this->time = time;
+}
+```
+
+# For the nerds,
+
+If you want to see the code for the PIDVisualizer, you can find it under the
+`src/components/specialties/PID` directory in my blog's repo
+[here](https://github.com/itzderock/derock.blog).
+
+It spawns a WebWorker to do the math, and uses canvases to render the graphs.
+Running the PID loops on the main thread caused the browser to be unresponsive,
+so I had to offload the work to separate threads.
+
+The simulator simulates a 15kg robot that has 100N of force available to it
+(random number I found worked well). For context, a typical 11W motor has a
+stall torque of 2.1Nm. The simulator also takes into account drag/friction to
+give a somewhat realistic simulation of a robot accelerating and decelerating.
+
+A lot of effort went into this visualization, so I hope you enjoy it!

@@ -33,13 +33,19 @@ export type PIDMessageReset = {
   type: "reset";
 };
 
+export type PIDMessageUpdatePosition = {
+  type: "updatePosition";
+  position: number;
+};
+
 export type PIDMessage =
   | PIDMessageInit
   | PIDMessageConfigUpdate
   | PIDMessagePause
   | PIDMessageStart
   | PIDMessageResize
-  | PIDMessageReset;
+  | PIDMessageReset
+  | PIDMessageUpdatePosition;
 
 let PIDInstance: PID | null = null;
 
@@ -76,6 +82,9 @@ onmessage = (event) => {
       const { config, canvases } = PIDInstance.getConfig();
       PIDInstance = null;
       PIDInstance = new PID(canvases, config);
+      break;
+    case "updatePosition":
+      PIDInstance.updatePosition(message.position);
       break;
   }
 };

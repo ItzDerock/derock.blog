@@ -1,12 +1,6 @@
 import { Chart } from "chart.js/auto";
-
-const K_COLOR = "#f00";
-const I_COLOR = "#0f0";
-const D_COLOR = "#00f";
-const OUTPUT_COLOR = "#000";
-const SETPOINT_COLOR = "#f0f";
-const POSITION_COLOR = "#ff0";
-const ERROR_COLOR = "#f00";
+import { PID_COLORS } from "./PIDConstants";
+import { Robot } from "./Robot";
 
 export type PIDConfig = {
   kp: number;
@@ -17,6 +11,9 @@ export type PIDConfig = {
   showI: boolean;
   showD: boolean;
   showError: boolean;
+  showOutput: boolean;
+  showSetpoint: boolean;
+  showPosition: boolean;
 };
 
 /**
@@ -28,11 +25,12 @@ export class PID {
   private static MAX_DATAPOINTS = 100;
   private static VIS_HEIGHT = 60;
   private static BOUNDS_LEFT = 0;
-  private static BOUNDS_RIGHT = 100;
+  private static BOUNDS_RIGHT = 20;
+  private robot: Robot;
   private integral = 0;
   private prevError = 0;
   private prevOutput = 0;
-  private setpoint = 50;
+  private setpoint = 10;
   private position = 0;
   private config: PIDConfig;
   private chart!: Chart;
@@ -67,9 +65,16 @@ export class PID {
       showI: true,
       showD: true,
       showError: true,
+      showOutput: true,
+      showPosition: true,
+      showSetpoint: true,
       ...config,
     };
 
+    this.prevError = this.setpoint - this.position;
+    this.prevOutput = this.config.kp * this.prevError;
+
+    this.robot = new Robot();
     this.initCharts();
     this.drawVis();
     this.updateChartSettings();
@@ -85,7 +90,7 @@ export class PID {
 
   public start() {
     if (!this.interval) {
-      console.log("[PID] Loop started.");
+      console.log("[PID] Loop started.", this.config);
       this.interval = setInterval(
         this.update.bind(this),
         PID.UPDATE_INTERVAL
@@ -136,20 +141,21 @@ export class PID {
   }
 
   private updatePID(): [number, number, number, number] {
+    this.position = this.robot.getPosition();
     const error = this.setpoint - this.position;
-    this.integral += error * PID.UPDATE_INTERVAL;
-    const derivative = (error - this.prevError) / PID.UPDATE_INTERVAL;
+    this.integral += error;
+    const derivative = error - this.prevError;
 
     const outputK = this.config.kp * error;
     const outputI = this.config.ki * this.integral;
     const outputD = this.config.kd * derivative;
     const systemOut = outputK + outputI + outputD;
 
-    const realOut =
-      slewRateLimit(systemOut, this.prevOutput, PID.SLEW_RATE) * 0.016;
+    this.robot.setMotorPower(systemOut);
+    this.robot.update();
 
-    this.prevOutput = realOut;
-    this.position = this.position + realOut;
+    this.prevOutput = systemOut;
+    this.position = this.robot.getPosition();
     this.prevError = error;
 
     return [systemOut, outputK, outputI, outputD];
@@ -173,30 +179,37 @@ export class PID {
             {
               label: "Setpoint",
               data: this.datapoints[1],
+              borderColor: PID_COLORS.SETPOINT_COLOR,
             },
             {
               label: "Position",
               data: this.datapoints[2],
+              borderColor: PID_COLORS.POSITION_COLOR,
             },
             {
               label: "Error",
               data: this.datapoints[3],
+              borderColor: PID_COLORS.ERROR_COLOR,
             },
             {
               label: "Output",
               data: this.datapoints[4],
+              borderColor: PID_COLORS.OUTPUT_COLOR,
             },
             {
               label: "Output P",
               data: this.datapoints[5],
+              borderColor: PID_COLORS.P_COLOR,
             },
             {
               label: "Output I",
               data: this.datapoints[6],
+              borderColor: PID_COLORS.I_COLOR,
             },
             {
               label: "Output D",
               data: this.datapoints[7],
+              borderColor: PID_COLORS.D_COLOR,
             },
           ],
         },
@@ -216,7 +229,7 @@ export class PID {
             },
             y: {
               ticks: {
-                display: false,
+                display: true,
               },
             },
           },
@@ -251,21 +264,21 @@ export class PID {
     ctx.fillRect(0, PID.VIS_HEIGHT / 2 - 4, this.canvases.vis.width, 4);
 
     // draw an error bar
-    ctx.fillStyle = ERROR_COLOR;
+    ctx.fillStyle = PID_COLORS.ERROR_COLOR;
     let errorLeft = Math.min(position, setpoint);
     let errorRight = Math.max(position, setpoint);
     ctx.fillRect(errorLeft, PID.VIS_HEIGHT / 2 - 4, errorRight - errorLeft, 4);
 
     // draw position
-    ctx.fillStyle = POSITION_COLOR;
+    ctx.fillStyle = PID_COLORS.POSITION_COLOR;
     ctx.fillRect(position - 8, PID.VIS_HEIGHT / 2 - 12, 16, 24);
 
     // draw setpoint
-    ctx.fillStyle = SETPOINT_COLOR;
+    ctx.fillStyle = PID_COLORS.SETPOINT_COLOR;
     ctx.fillRect(setpoint - 8, PID.VIS_HEIGHT / 2 - 12, 16, 24);
 
     // write position text
-    ctx.fillStyle = POSITION_COLOR;
+    ctx.fillStyle = PID_COLORS.POSITION_COLOR;
     ctx.font = "14px sans-serif";
     let positionText = this.position.toFixed(2);
     ctx.fillText(
@@ -275,7 +288,7 @@ export class PID {
     );
 
     // write setpoint text
-    ctx.fillStyle = SETPOINT_COLOR;
+    ctx.fillStyle = PID_COLORS.SETPOINT_COLOR;
     let setpointText = this.setpoint.toFixed(2);
     ctx.fillText(
       setpointText,
@@ -286,6 +299,10 @@ export class PID {
 
   private updateChartSettings() {
     // enable/disable different datasets
+    this.chart.data.datasets[0].hidden = !this.config.showSetpoint;
+    this.chart.data.datasets[1].hidden = !this.config.showPosition;
+    this.chart.data.datasets[2].hidden = !this.config.showError;
+    this.chart.data.datasets[3].hidden = !this.config.showOutput;
     this.chart.data.datasets[4].hidden = !this.config.showP;
     this.chart.data.datasets[5].hidden = !this.config.showI;
     this.chart.data.datasets[6].hidden = !this.config.showD;
@@ -313,6 +330,14 @@ export class PID {
       config: this.config,
       canvases: this.canvases,
     };
+  }
+
+  public updatePosition(position: number) {
+    this.robot.reset(position);
+    this.prevError = this.setpoint - position;
+    this.prevOutput = this.config.kp * this.prevError;
+    this.integral = 0;
+    this.position = position;
   }
 }
 
