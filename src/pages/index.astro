@@ -26,7 +26,11 @@ const featured = posts.shift();
         {featured && <BlogCard blog={featured} />}
 
         <h1 class="text-xl font-bold mt-8 leading-none">Older posts</h1>
-        {posts.map((post, i) => <SmallBlogCard blog={post} aosDelay={(i + 1) * 150} />)}
+        {
+          posts.map((post, i) => (
+            <SmallBlogCard blog={post} aosDelay={(i + 1) * 150} />
+          ))
+        }
       </BlogCardsContainer>
     </section>
   </main>
@@ -42,5 +46,6 @@ const featured = posts.shift();
       window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     duration: 600,
     easing: "ease-out-sine",
+    offset: 0,
   });
 </script>
