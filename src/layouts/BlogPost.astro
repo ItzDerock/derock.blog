@@ -5,6 +5,7 @@ import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
 import RootLayout from "./RootLayout.astro";
+import "../styles/comentario.css";
 
 type Props = CollectionEntry<"blog">["data"] & {
   frontmatter: Record<string, any>;
@@ -14,7 +15,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 const { minutesRead } = Astro.props.frontmatter;
 ---
 
-<RootLayout meta={{ title: `derock.blog: ${title}`, description, image: heroImage }} >
+<RootLayout
+  meta={{ title: `derock.blog: ${title}`, description, image: heroImage }}
+>
   <Header />
   <main>
     <article class="leading-[1.7]">
@@ -77,9 +80,14 @@ const { minutesRead } = Astro.props.frontmatter;
             <Icon name="mdi:arrow-up" size={24} class="inline-block" /> Top
           </a>
         </div>
+
+        <comentario-comments theme="dark"></comentario-comments>
       </div>
     </article>
   </main>
 
   <Footer />
+
+  <script is:inline defer src="https://comments.derock.blog/comentario.js"
+  ></script>
 </RootLayout>
