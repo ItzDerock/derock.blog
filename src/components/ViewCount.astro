@@ -1,0 +1,41 @@
+---
+import { env } from "../utils/env";
+
+export const prerender = false;
+export type Props = {
+  postId: string;
+};
+
+const { postId } = Astro.props;
+
+// attempt to fetch from plausible
+const url = new URL(env.PLAUSIBLE_URL ?? "");
+url.pathname = "/api/v2/query";
+
+const count =
+  env.PLAUSIBLE_URL && env.PLAUSIBLE_API_KEY && env.PLAUSIBLE_SITE_ID
+    ? await fetch(url.href, {
+        body: JSON.stringify({
+          site_id: env.PLAUSIBLE_SITE_ID,
+          date_range: "all",
+          metrics: ["visitors"],
+          filters: [["is", "event:page", [`/post/${postId}`]]],
+        }),
+
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${env.PLAUSIBLE_API_KEY}`,
+        },
+
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((res) => res.results[0].metrics[0])
+        .catch((err) => {
+          console.error(err);
+          return -1;
+        })
+    : null;
+---
+
+<span>{typeof count === "number" ? count.toLocaleString() : "Unknown "}</span>

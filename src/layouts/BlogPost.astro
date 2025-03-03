@@ -6,6 +6,7 @@ import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
 import RootLayout from "./RootLayout.astro";
 import "../styles/comentario.css";
+import ViewCount from "../components/ViewCount.astro";
 
 type Props = CollectionEntry<"blog">["data"] & {
   frontmatter: Record<string, any>;
@@ -13,6 +14,7 @@ type Props = CollectionEntry<"blog">["data"] & {
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 const { minutesRead } = Astro.props.frontmatter;
+const slug = Astro.params.slug ?? "";
 ---
 
 <RootLayout
@@ -28,6 +30,9 @@ const { minutesRead } = Astro.props.frontmatter;
             <FormattedDate date={pubDate} />
             {" "}•{" "}
             {minutesRead}
+            {" "}•{" "}
+            <ViewCount server:defer postId={slug} />
+            views
 
             {
               updatedDate && (
