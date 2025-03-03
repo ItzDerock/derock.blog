@@ -10,14 +10,18 @@ import remarkMath from "remark-math";
 import { remarkReadingTime } from "./src/plugins/readingTime.mjs";
 import prebundleWorkers from "vite-plugin-prebundle-workers";
 
+import vercel from "@astrojs/vercel";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://derock.blog",
   integrations: [mdx(), sitemap(), tailwind(), solidJs(), icon()],
+
   markdown: {
     remarkPlugins: [remarkMermaid, remarkMath, remarkReadingTime],
     rehypePlugins: [rehypeKatex],
   },
+
   vite: {
     plugins: [
       prebundleWorkers({
@@ -25,4 +29,6 @@ export default defineConfig({
       }),
     ],
   },
+
+  adapter: vercel(),
 });
