@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
 import BlogPost from "../../layouts/BlogPost.astro";
+import ExternalLink from "../../components/ExternalLink.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -15,7 +16,11 @@ const { Content, remarkPluginFrontmatter } = await post.render();
 ---
 
 <BlogPost {...post.data} frontmatter={remarkPluginFrontmatter}>
-  <Content />
+  <Content
+    components={{
+      a: ExternalLink,
+    }}
+  />
 </BlogPost>
 
 <link

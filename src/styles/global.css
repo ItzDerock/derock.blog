@@ -97,7 +97,7 @@ body {
   }
 
   code {
-    @apply px-1 py-[0.125rem] bg-gray-700 text-white rounded-sm inline-block box-content;
+    @apply px-1 py-[0.115rem] bg-gray-700/60 text-white rounded-sm inline-block box-content text-sm;
   }
 
   pre {
