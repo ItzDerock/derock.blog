@@ -340,12 +340,3 @@ export class PID {
     this.position = position;
   }
 }
-
-function slewRateLimit(value: number, prevValue: number, rate: number) {
-  const diff = value - prevValue;
-  if (Math.abs(diff) > rate) {
-    return prevValue + (diff < 0 ? -rate : rate);
-  }
-
-  return value;
-}

@@ -30,5 +30,8 @@ export default defineConfig({
     ],
   },
 
+  // vercel adapter only builds with server output
+  // still generates static pages
   adapter: vercel(),
+  output: "server",
 });

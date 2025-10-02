@@ -1,0 +1,23 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+export interface Props extends HTMLAttributes<"a"> {
+  href: string;
+}
+
+const domain = import.meta.env.SITE;
+const { href, ...attrs } = Astro.props;
+
+// add target and rel for external links
+try {
+  const url = new URL(href);
+  const blogDomain = new URL(domain);
+
+  if (url.hostname != blogDomain.hostname) {
+    attrs["target"] = "_blank";
+    attrs["rel"] = "noopener noreferrer";
+  }
+} catch (e) {}
+---
+
+<a href={href} {...attrs}><slot /></a>
