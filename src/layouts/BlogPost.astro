@@ -31,7 +31,9 @@ const slug = Astro.params.slug ?? "";
             {" "}•{" "}
             {minutesRead}
             {" "}•{" "}
-            <ViewCount server:defer postId={slug} />
+            <ViewCount server:defer postId={slug}>
+              <span slot="fallback">...</span>
+            </ViewCount>
             views
 
             {
