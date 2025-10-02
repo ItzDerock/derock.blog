@@ -36,6 +36,14 @@ const count =
           return -1;
         })
     : null;
+
+// Cache if successful
+if (count !== -1) {
+  Astro.response.headers.set(
+    "Cache-Control",
+    "public, max-age=3600, s-maxage=3600"
+  );
+}
 ---
 
-<span>{typeof count === "number" ? count.toLocaleString() : "Unknown "}</span>
+<span>{typeof count === "number" ? count.toLocaleString() : "Unknown"}</span>

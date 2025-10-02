@@ -1,0 +1,22 @@
+---
+export const prerender = false;
+
+// disable indexing for this page
+Astro.response.headers.set("X-Robots-Tag", "noindex");
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=31536000, s-maxage=31536000"
+);
+---
+
+<html>
+  <body>
+    <p class="text-center">
+      hello this exists only cus of astro issue
+      <a
+        class="text-blue-500 underline"
+        href="https://github.com/withastro/astro/issues/12744">#12744</a
+      >
+    </p>
+  </body>
+</html>
