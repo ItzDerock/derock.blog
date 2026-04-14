@@ -1,29 +1,59 @@
 ---
-const today = new Date();
 import { Icon } from "astro-icon/components";
+const today = new Date();
 ---
 
-<footer class="py-8 flex flex-col mx-auto text-center items-center">
-  &copy; {today.getFullYear()} Derock X. All rights reserved.
-  <div class="flex flex-row gap-4">
-    <a href="https://derock.dev/?ref=blog" target="_blank">
-      <span class="sr-only">Go to Derock's Website</span>
-      <Icon name="mdi:web" size={32} />
-    </a>
+<footer class="mt-16 border-t border-gray-800">
+  <div
+    class="max-w-3xl mx-auto px-8 md:px-0 py-10 flex flex-row items-center justify-between gap-6"
+  >
+    <div>
+      <p class="text-sm font-medium text-white">derock.blog</p>
+      <p class="text-xs text-gray-500 mt-1">
+        &copy; {today.getFullYear()} Derock X. All rights reserved.
+      </p>
+    </div>
 
-    <a href="https://discord.gg/Fbm7AeazHQ" target="_blank">
-      <span class="sr-only">Join Derock's Discord</span>
-      <Icon name="fa6-brands:discord" size={32} />
-    </a>
-
-    <a href="https://twitter.com/derockgamer" target="_blank">
-      <span class="sr-only">Follow Derock on Twitter</span>
-      <Icon name="fa6-brands:x-twitter" size={32} />
-    </a>
-
-    <a href="https://github.com/ItzDerock" target="_blank">
-      <span class="sr-only">Go to Derock's GitHub repo</span>
-      <Icon name="fa6-brands:github" size={32} />
-    </a>
+    <div class="flex flex-row items-center gap-3">
+      <a
+        href="https://derock.dev/?ref=blog"
+        target="_blank"
+        class="text-gray-500 hover:text-white transition-colors"
+        aria-label="Portfolio"
+      >
+        <Icon name="mdi:web" size={20} />
+      </a>
+      <a
+        href="https://discord.gg/Fbm7AeazHQ"
+        target="_blank"
+        class="text-gray-500 hover:text-white transition-colors"
+        aria-label="Discord"
+      >
+        <Icon name="fa6-brands:discord" size={20} />
+      </a>
+      <a
+        href="https://twitter.com/derockgamer"
+        target="_blank"
+        class="text-gray-500 hover:text-white transition-colors"
+        aria-label="Twitter / X"
+      >
+        <Icon name="fa6-brands:x-twitter" size={20} />
+      </a>
+      <a
+        href="https://github.com/ItzDerock"
+        target="_blank"
+        class="text-gray-500 hover:text-white transition-colors"
+        aria-label="GitHub"
+      >
+        <Icon name="fa6-brands:github" size={20} />
+      </a>
+      <a
+        href="/rss.xml"
+        class="text-gray-500 hover:text-white transition-colors"
+        aria-label="RSS feed"
+      >
+        <Icon name="mdi:rss" size={20} />
+      </a>
+    </div>
   </div>
 </footer>

@@ -1,0 +1,142 @@
+---
+import { Icon } from "astro-icon/components";
+import type { CollectionEntry } from "astro:content";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import Header from "../components/Header.astro";
+import RootLayout from "./RootLayout.astro";
+import ViewCount from "../components/ViewCount.astro";
+import "../styles/comentario.css";
+
+type Props = CollectionEntry<"bits">["data"] & {
+  frontmatter: Record<string, any>;
+};
+
+const { title, description, pubDate, updatedDate, heroImage, tags } =
+  Astro.props;
+const { minutesRead } = Astro.props.frontmatter;
+const slug = (Astro.params as { slug: string }).slug ?? "";
+
+const tagColorMap: Record<string, string> = {
+  code: "bg-blue-900/60 text-blue-300",
+  tool: "bg-emerald-900/60 text-emerald-300",
+  find: "bg-amber-900/60 text-amber-300",
+  tip: "bg-purple-900/60 text-purple-300",
+  til: "bg-amber-900/60 text-amber-300",
+  note: "bg-gray-700/60 text-gray-300",
+  linux: "bg-orange-900/60 text-orange-300",
+  nix: "bg-sky-900/60 text-sky-300",
+  rust: "bg-orange-900/60 text-orange-300",
+};
+---
+
+<RootLayout
+  meta={{
+    title: `derock.blog: ${title}`,
+    description: description ?? title,
+    image: heroImage,
+  }}
+>
+  <Header />
+  <main>
+    <article class="leading-[1.7]">
+      <!-- top header -->
+      <div class="max-w-4xl px-8 m-auto sm:pt-4 text-white">
+        <div class="py-4 text-center leading-none">
+          <!-- tag badges -->
+          <div class="flex justify-center gap-1.5 mb-3">
+            {
+              tags.length > 0 ? (
+                tags.map((tag) => (
+                  <span
+                    class={`inline-block text-xs font-mono font-medium px-2 py-0.5 rounded ${tagColorMap[tag.toLowerCase()] ?? "bg-blue-900/60 text-blue-300"}`}
+                  >
+                    {tag}
+                  </span>
+                ))
+              ) : (
+                <span class="inline-block text-xs font-mono font-medium px-2 py-0.5 rounded bg-blue-900/60 text-blue-300">
+                  bit
+                </span>
+              )
+            }
+          </div>
+
+          <div class="mb-4 text-sm text-gray-400">
+            <FormattedDate date={pubDate} />
+            {minutesRead && <> • {minutesRead}</>}
+            {" "}•{" "}
+            <ViewCount server:defer postId={`bit/${slug}`}>
+              <span slot="fallback">...</span>
+            </ViewCount>
+            {" "}views
+
+            {
+              updatedDate && (
+                <div class="italic mt-1">
+                  Last updated on <FormattedDate date={updatedDate} />
+                </div>
+              )
+            }
+          </div>
+
+          <h1 class="text-4xl text-balance">{title}</h1>
+          {
+            description && (
+              <p class="mt-3 text-lg text-gray-400 text-balance">
+                {description}
+              </p>
+            )
+          }
+        </div>
+      </div>
+
+      <!-- optional hero image -->
+      {
+        heroImage && (
+          <div class="w-full">
+            <img
+              width={1200}
+              height={600}
+              src={heroImage}
+              alt={`Hero image for ${title}`}
+              class="block mx-auto rounded-xl shadow-md"
+            />
+          </div>
+        )
+      }
+
+      <hr class="my-8 max-w-4xl mx-16 lg:mx-auto border-gray-500" />
+
+      <!-- content -->
+      <div class="max-w-4xl px-8 m-auto pb-4">
+        <div class="post">
+          <slot />
+        </div>
+
+        <div class="flex flex-row items-center mt-8 justify-between">
+          <a
+            href="/bits"
+            class="text-blue-400 hover:text-blue-600 leading-none flex flex-row items-center gap-1"
+          >
+            <Icon name="mdi:arrow-back" size={24} class="inline-block" /> All Bits
+          </a>
+
+          <a
+            href="#top"
+            class="text-blue-400 hover:text-blue-600 leading-none flex flex-row items-center gap-1"
+          >
+            <Icon name="mdi:arrow-up" size={24} class="inline-block" /> Top
+          </a>
+        </div>
+
+        <comentario-comments theme="dark"></comentario-comments>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+
+  <script is:inline defer src="https://comments.derock.blog/comentario.js"
+  ></script>
+</RootLayout>

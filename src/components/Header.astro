@@ -4,17 +4,28 @@
 
 <header>
   <nav
-    class="py-8 flex flex-row text-xl max-w-3xl mx-auto items-center leading-none justify-between px-8 md:px-0"
+    class="py-5 flex flex-row max-w-3xl mx-auto items-center leading-none justify-between px-8 md:px-0"
   >
-    <a href="/" class="flex flex-row items-center gap-2">
-      <img src="/icons/logo_64.webp" alt="Derock's Logo" class="h-10 w-auto" />
-      <span class="hidden sm:block">Derock's Blog</span>
+    <a
+      href="/"
+      class="flex flex-row items-center gap-2 text-base font-medium text-white hover:text-gray-300 transition-colors"
+    >
+      <img
+        src="/icons/logo_64.webp"
+        alt="derock's logo"
+        class="h-7 w-auto opacity-80"
+      />
+      derock.blog
     </a>
 
-    <div class="flex flex-row items-center gap-4 text-lg text-gray-300">
-      <a href="/">Home</a>
-      <a href="https://derock.dev/?ref=blog">Portfolio</a>
-      <a href="/rss.xml">RSS</a>
+    <div class="flex flex-row items-center gap-5 text-base text-gray-400">
+      <a href="/posts" class="hover:text-white transition-colors">posts</a>
+      <a href="/bits" class="hover:text-white transition-colors">bits</a>
+      <a
+        href="https://derock.dev/?ref=blog"
+        class="hover:text-white transition-colors">portfolio</a
+      >
+      <a href="/rss.xml" class="hover:text-white transition-colors">rss</a>
     </div>
   </nav>
 </header>

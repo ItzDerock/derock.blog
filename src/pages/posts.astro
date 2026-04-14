@@ -1,0 +1,64 @@
+---
+import { getCollection } from "astro:content";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import SmallBlogCard from "../components/cards/SmallBlogCard.astro";
+import BlogCardsContainer from "../components/solid/BlogCardsContainer";
+import RootLayout from "../layouts/RootLayout.astro";
+import "aos/dist/aos.css";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+---
+
+<RootLayout
+  meta={{
+    title: "All Posts — derock.blog",
+    description: `${posts.length} blog posts covering embedded systems, infrastructure, security, and more.`,
+  }}
+>
+  <Header />
+  <main class="px-4">
+    <section class="max-w-3xl mx-auto mt-6 mb-12">
+      <a
+        href="/"
+        class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mb-6"
+      >
+        ← home
+      </a>
+      <div class="flex justify-between items-baseline mb-6">
+        <h1 class="text-xl font-bold">All Posts</h1>
+        <span class="text-sm text-gray-400">{posts.length} posts</span>
+      </div>
+      <BlogCardsContainer client:load>
+        {
+          posts.map((post, i) => (
+            <SmallBlogCard blog={post} aosDelay={i * 100} />
+          ))
+        }
+      </BlogCardsContainer>
+      <a
+        href="/"
+        class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mt-6"
+      >
+        ← home
+      </a>
+    </section>
+  </main>
+  <Footer />
+</RootLayout>
+
+<script>
+  import AOS from "aos";
+
+  AOS.init({
+    once: true,
+    disable:
+      /bot|crawler|spider|crawling/i.test(navigator.userAgent) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    duration: 600,
+    easing: "ease-out-sine",
+    offset: 0,
+  });
+</script>
