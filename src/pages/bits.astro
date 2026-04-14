@@ -1,0 +1,79 @@
+---
+import { getCollection } from "astro:content";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import BitCard from "../components/cards/BitCard.astro";
+import BlogCardsContainer from "../components/solid/BlogCardsContainer";
+import RootLayout from "../layouts/RootLayout.astro";
+import "aos/dist/aos.css";
+
+const bits = (await getCollection("bits")).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+---
+
+<RootLayout
+  meta={{
+    title: "All Bits — derock.blog",
+    description:
+      "Short TIL-style findings, quick discoveries, tips, and observations.",
+  }}
+>
+  <Header />
+  <main class="px-4">
+    <section class="max-w-3xl mx-auto mt-6 mb-12">
+      <a
+        href="/"
+        class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mb-6"
+      >
+        ← home
+      </a>
+      <div class="flex justify-between items-baseline mb-2">
+        <h1 class="text-xl font-bold">
+          Bits
+          <span class="text-sm font-normal text-gray-400 ml-2">
+            short TIL-style findings
+          </span>
+        </h1>
+        <span class="text-sm text-gray-400">{bits.length} bits</span>
+      </div>
+
+      <div class="mt-4">
+        {
+          bits.length > 0 ? (
+            <BlogCardsContainer client:load>
+              {bits.map((bit, i) => (
+                <BitCard bit={bit} aosDelay={i * 80} />
+              ))}
+            </BlogCardsContainer>
+          ) : (
+            <p class="text-gray-500 py-8 text-center">
+              No bits yet — check back soon.
+            </p>
+          )
+        }
+      </div>
+      <a
+        href="/"
+        class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mt-6"
+      >
+        ← home
+      </a>
+    </section>
+  </main>
+  <Footer />
+</RootLayout>
+
+<script>
+  import AOS from "aos";
+
+  AOS.init({
+    once: true,
+    disable:
+      /bot|crawler|spider|crawling/i.test(navigator.userAgent) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    duration: 600,
+    easing: "ease-out-sine",
+    offset: 0,
+  });
+</script>

@@ -1,0 +1,66 @@
+---
+title: "Transmit DATV on a wire using a Pi"
+description:
+  "Cool program that allows you to transmit digital DATV (h264 + qpsk +
+  reed-solomon) without an SDR using just a Raspberry Pi and a wire."
+pubDate: 2025-04-14
+tags: [RF]
+---
+
+import { Image } from "astro:assets";
+import System from "../../images/Raspberry Pi DATV/system.webp";
+
+Recently I came across the [rpidatv](https://github.com/f5oeo/rpidatv) program
+by F5OEO which promises live digital video using simply the Pi and a piece of
+wire as the antenna.
+
+As someone who spent the past month researching different SDRs and built my own
+protocol for sending digital video (i'll have a post on this soon™️), I was
+quite skeptical at first. Traditionally, SDRs consist of an FPGA + RFIC that
+work together to create the necessary modulation. Here, none of that is present.
+Just a Pi and a GPIO pin being toggled on and off.
+
+The original project is 10 years old, and as such, it did not compile on the
+latest version of the Raspberry Pi OS. The original project had a lookup-table
+programmed in assembly (dvbenco8.S) which I rewrote in C so it could be compiled
+for the Pi 4's arm64 cpu.
+
+Some of the dependencies are also not available on debian anymore, such as
+WiringPi, but it can still be compiled from source. Other dependencies had been
+renamed as well. Lastly, I ditched the original usage of avc2ts in favor of
+using ffmpeg for conversion, since I could take use of the Pi's hardware h264
+encoder. My modified code can be found
+[on GitHub](https://github.com/ItzDerock/rpidatv)
+
+<center>
+  <Image
+    alt="full system setup, laptop showing qpsk constellation"
+    src={System}
+  />
+
+  <p class="text-gray-400 my-2">
+    Full system setup. A cut wire is inside the straw which holds it upright.
+    Laptop uses RTL-SDR and SDRAngel to capture and decode the stream
+  </p>
+</center>
+
+In the end, it worked surprisingly well. I was able to push ~700kbps link with
+3/4 fec ratio, which works well to transmit a 640x360 h264 encoded stream. The
+receiver is an RTL-SDR running a generic V-shaped antenna.
+
+<center>
+  <video
+    src="https://files.derock.media/pR0841P6pt2P.mp4"
+    alt="screen recording showing the live video playback"
+    controls
+  />
+</center>
+
+From my understanding of how this works, the signal is generated using PWM via
+DMA which divides the Pi's PLL-D (Phase-Locked Loop D). PLLD can run at 500MHz
+or 1GHz depending on the Pi model, and additional frequencies can be created by
+dividing this. Higher frequencies can be obtained by using the harmonics
+created, so with the right fundamental frequency, it can generate a higher
+frequency. DMA allows for the signal to change rapidly without the CPU having to
+coordinate everything. But, without a PA or any filters, the resulting signal is
+weak and bleeds into nearby channels.

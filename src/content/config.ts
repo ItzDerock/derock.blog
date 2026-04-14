@@ -14,4 +14,17 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const bits = defineCollection({
+  type: "content",
+  // Bits are short, informal TIL-style findings
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    heroImage: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { blog, bits };

@@ -1,0 +1,67 @@
+---
+import { type CollectionEntry } from "astro:content";
+import { format } from "date-fns/format";
+import Card from "./Card.astro";
+
+interface Props {
+  bit: CollectionEntry<"bits">;
+  aosDelay?: number;
+}
+
+const bit = Astro.props.bit;
+const date = format(bit.data.pubDate, "MMM d, yyyy");
+
+const tagColorMap: Record<string, string> = {
+  code: "bg-blue-900/60 text-blue-300",
+  tool: "bg-emerald-900/60 text-emerald-300",
+  find: "bg-amber-900/60 text-amber-300",
+  tip: "bg-purple-900/60 text-purple-300",
+  til: "bg-amber-900/60 text-amber-300",
+  note: "bg-gray-700/60 text-gray-300",
+  linux: "bg-orange-900/60 text-orange-300",
+  nix: "bg-sky-900/60 text-sky-300",
+  rust: "bg-orange-900/60 text-orange-300",
+};
+
+const firstTag = bit.data.tags[0];
+const tagLabel = firstTag ?? "bit";
+const tagColor =
+  (firstTag && tagColorMap[firstTag.toLowerCase()]) ??
+  "bg-blue-900/60 text-blue-300";
+---
+
+<a
+  href={`/bit/${bit.slug}`}
+  class="group"
+  data-aos="fade-up"
+  data-aos-delay={Astro.props.aosDelay?.toString() ?? "0"}
+>
+  <Card>
+    <div class="flex items-start gap-3">
+      <span
+        class={`text-xs font-mono font-medium px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5 ${tagColor}`}
+      >
+        {tagLabel}
+      </span>
+      <div class="flex-1 min-w-0">
+        <div
+          class="text-sm font-medium text-white leading-snug group-hover:text-blue-300 transition-colors"
+        >
+          {bit.data.title}
+        </div>
+        {
+          bit.data.description && (
+            <div class="text-xs text-gray-400 mt-1 leading-relaxed">
+              {bit.data.description}
+            </div>
+          )
+        }
+      </div>
+      <span
+        class="text-xs text-gray-500 font-mono flex-shrink-0 mt-0.5 whitespace-nowrap"
+      >
+        {date}
+      </span>
+    </div>
+  </Card>
+</a>

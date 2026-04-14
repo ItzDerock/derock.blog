@@ -13,15 +13,20 @@ const blog = Astro.props.blog;
 const date = format(blog.data.pubDate, "MMM d, yyyy");
 ---
 
-<a 
-  href={`/post/${blog.slug}`} 
-  data-aos="fade-up" 
+<a
+  href={`/post/${blog.slug}`}
+  class="group"
+  data-aos="fade-up"
   data-aos-delay={Astro.props.aosDelay?.toString() ?? "0"}
 >
   <Card>
     <div class="flex flex-row gap-4 justify-between">
       <div class="flex-grow-0">
-        <h1 class="text-lg font-bold">{blog.data.title}</h1>
+        <h1
+          class="text-lg font-bold group-hover:text-blue-300 transition-colors"
+        >
+          {blog.data.title}
+        </h1>
         <p class="text-sm text-gray-400">
           {date}
 

@@ -2,40 +2,104 @@
 import { getCollection } from "astro:content";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import BlogCard from "../components/cards/BlogCard.astro";
 import SmallBlogCard from "../components/cards/SmallBlogCard.astro";
+import BitCard from "../components/cards/BitCard.astro";
 import BlogCardsContainer from "../components/solid/BlogCardsContainer";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import RootLayout from "../layouts/RootLayout.astro";
 import "aos/dist/aos.css";
 
-const posts = (await getCollection("blog")).sort(
+const allPosts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
 );
+const recentPosts = allPosts.slice(0, 3);
 
-const featured = posts.shift();
+const allBits = (await getCollection("bits")).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+const recentBits = allBits.slice(0, 3);
 ---
 
 <!doctype html>
 <RootLayout meta={{ title: SITE_TITLE, description: SITE_DESCRIPTION }}>
   <Header />
   <main class="px-4">
-    <section class="max-w-3xl mx-auto">
-      <BlogCardsContainer client:load>
-        <h1 class="text-xl font-bold leading-none">Latest Post</h1>
-        {featured && <BlogCard blog={featured} />}
+    <section class="max-w-3xl mx-auto mt-4">
+      <!-- Recent Posts -->
+      <div class="mb-10">
+        <div class="flex justify-between items-baseline mb-4">
+          <h2
+            class="text-xs font-medium tracking-[0.08em] uppercase text-gray-500"
+          >
+            Recent Posts
+          </h2>
+          <a
+            href="/posts"
+            class="text-xs text-gray-400 hover:text-white transition-colors"
+          >
+            all posts →
+          </a>
+        </div>
+        <BlogCardsContainer client:load>
+          {
+            recentPosts.map((post, i) => (
+              <SmallBlogCard blog={post} aosDelay={i * 150} />
+            ))
+          }
+        </BlogCardsContainer>
+      </div>
 
-        <h1 class="text-xl font-bold mt-8 leading-none">Older posts</h1>
-        {
-          posts.map((post, i) => (
-            <SmallBlogCard blog={post} aosDelay={(i + 1) * 150} />
-          ))
-        }
-      </BlogCardsContainer>
+      <!-- Recent Bits -->
+      <div class="mb-10">
+        <div class="flex justify-between items-baseline mb-4">
+          <h2
+            class="text-xs font-medium tracking-[0.08em] uppercase text-gray-500"
+          >
+            Recent{" "}
+            <span class="bits-label relative inline-block">
+              <span class="border-b border-dotted border-gray-500 cursor-help"
+                >bits</span
+              >
+              <span
+                class="bits-tooltip absolute bottom-full left-0 mb-2 w-64 p-2.5 text-xs bg-gray-800 border border-gray-700 rounded-md opacity-0 pointer-events-none normal-case tracking-normal font-normal leading-relaxed z-10 whitespace-normal shadow-lg"
+              >
+                Bits are short, informal TIL-style findings: quick discoveries,
+                tips, and observations that don't warrant a full post.
+              </span>
+            </span>
+          </h2>
+          <a
+            href="/bits"
+            class="text-xs text-gray-400 hover:text-white transition-colors"
+          >
+            all bits →
+          </a>
+        </div>
+        <BlogCardsContainer client:load>
+          {
+            recentBits.length > 0 ? (
+              recentBits.map((bit, i) => (
+                <BitCard bit={bit} aosDelay={i * 100} />
+              ))
+            ) : (
+              <p class="text-sm text-gray-500 py-4">
+                No bits yet — check back soon.
+              </p>
+            )
+          }
+        </BlogCardsContainer>
+      </div>
     </section>
   </main>
   <Footer />
 </RootLayout>
+
+<style>
+  .bits-label:hover .bits-tooltip {
+    opacity: 1;
+  }
+</style>
+
 <script>
   import AOS from "aos";
 
