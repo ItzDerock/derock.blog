@@ -1,0 +1,173 @@
+---
+title: "DIY Weather Station Project"
+description:
+  "A project that may initially sound Olympiad Robot Tour competition."
+pubDate: "May 25, 2025"
+heroImage: "/thumbs/scioly-robot-tour-2024.webp"
+tags: ["diy"]
+---
+
+Weather is very hard to predict, being known as a "chaotic system," where even
+the smallest unmeasured wind gust can throw off the entire model. Just like any
+prediction problem, the more data one can collect, the more accurate the
+predictions will be. Through services like Weather Underground, you can link
+your own Personal Weather Station (PWS) to a larger array of other PWSes and
+improve prediction accuracy for everyone. Furthermore, you can get precise,
+localized, current weather information for where the weather station gets
+deployed.
+
+Existing Personal Weather Stations from vendors like /_ FIXME _/ DavisPro are
+expensive:
+
+/_ TODO _/
+
+# The Goal
+
+Build a weather station that is fully self-sufficient (i.e. no power or wifi
+required) that can periodically collect and send data.
+
+## Data points
+
+After much, much research (thanks [Bright Z.](link) and [Daniel P.](link)) for
+assistance here), we settled on the following set of datapoints:
+
+- **Wind speed**: The average wind speed over a set duration (i.e. 10 minutes).
+- **Wind gusts**: The highest 3-second average over a longer duration (10
+  minutes).
+- **Wind direction**: The average heading the wind is blowing.
+- **Rain**: The total collected (mm/in) of rainfall over a period of time.
+- **Temperature**: The air temperature _in the shade_.
+- **Humidity**:
+- **Pressure**:
+- **UV Index**:
+- **Particulate Matter**: One component of the air quality index (AQI). Measures
+  the amount of particulates (categorized into buckets of 0.3um, 0.5um, 1.0um,
+  2.5um, 5.0um, and 10um sizes) per 0.1L of air.
+
+### Wind speed, gust, and direction
+
+These datapoints can be measured using an anemometer and wind vane. An
+anemometer is a ring of cups that catch the wind, spinning some device that can
+measure the speed. A wind vane consists of some object that points in the
+direction of the wind /_ TODO: REFACTOR _/
+
+While you could build these sensors yourself, they are really cheap to obtain.
+Argentdata provides "replacement" sensors that we can use for our own system.
+
+**Total cost:** $15 /_ TODO: check _/
+
+### Rain
+
+Similar to the wind data, Argentdata sell a rain gague: a device that has two
+buckets and tips when one gets full, sending a signal. Since the volume of the
+tipping buckets is known, we can calculate the rainfall volume based on the
+number of tips.
+
+**Total cost:** /_ TODO _/
+
+### Temperature & Humidity
+
+Many temperature sensors are multi-purpose and can sense not just temperature,
+but also humidity and some pressure. Initially, we looked at the [BME280](link)
+which offers the following features:
+
+- Temperature measurement, with +- 1C accuracy
+- Barometric pressure, with +- 1hPa absolute accuracy
+- Relative humidity, with +- 3% accuracy
+
+All for just $14.95! But after much deliberation, we ultimately landed on a
+different sensor. Since these datapoints are, in my opinion, the most important
+datapoints for a PWS, it would be better to go with a more specialized sensor,
+rather than one which is a "jack of all trades, master of none" in terms of
+accuracy.
+
+**Instead, we decided landed on the SHTC3**, which has the following features:
+
+- /_ TODO _/
+
+**Cost:** $6.95
+
+### Pressure
+
+Since the previous sensor does not provide pressure reading, we purchased the
+**[LPS25](link)** for that job, which has an accuracy of /_ TODO _/. Pressure
+drops is a really good indicator of a forming storm and other weather
+conditions.
+
+The "Secret Law of Storms" shows:
+
+$$
+\frac{dv}{dt} = - \frac{22.3}{v^{0.553}} \times \frac{dp}{dt} \\
+$$
+
+- where $\frac{dv}{dt}$ is wind acceleration (velocity derivative with respect
+  to time)
+- and $\frac{dp}{dt}$ is the pressure rate of change
+
+In layman's terms,
+
+> At a given wind speed, the marginal rate of increase of sustained wind speed
+> is directly proportional to the marginal rate of pressure fall.
+
+Source:
+[worldstormcentral.co](https://www.worldstormcentral.co/law%20of%20storms/secret%20law%20of%20storms.html)
+
+This pressure drop, along with humidity changes is something we humans
+subconsciously pick up on, and is why you can feel that a storm is coming.
+
+### UV Index
+
+Many UV index sensors estimate the UV index bsaed on light levels, without
+actually measuring UVA/UVB levels. For simplicity, we only need to focus on
+UVA/UVB measurement, and can omit UVC since that gets largely absorbed by the
+atmosphere.
+
+We considered the following sensors,
+
+- **VEML6075**
+  - Measures UVB (315nm-340nm), and UVA (350nm-375nm) for originally under $10.
+  - Except, this sensor is discontinued, with one user reporting: "I have tested
+    the VEML 6075 sensor and found it utterly unreliable, delivering data which
+    did not make much sense. There is probably a good reason for the
+    manufacturer having stopped production!" So we decided against purchasing
+    this.
+- **AS7331**
+  - Measures UVA (320-400nm), UVB (280-320nm), and UVC (200-280nm) with high
+    accuracy.
+  - But, it is more expensive than others: $27.50
+- **LTR390**
+  - Measures both ambient light and UVA with peak between 300 and 350nm.
+  - Has an easy-to-read UV index register, and the manufacturer datasheet shows
+    high accuracy; an R^2 of 0.9843. /_ TODO: graph _/
+  - **Decided to purchase this sensor**
+
+### CO2 Sensor
+
+Despite how the media portrays it, outdoor CO2 levels aren't high enough for
+this to be a major factor in the air quality. /_fact_/
+
+Furthermore, many CO2 sensors _estimate_ the CO2 levels based on VOC gas
+concentration or some other correlated variable and do not actually measure the
+true CO2 concentration. Many sensors also perform a "baseline calibration" where
+it will assume the lowest reading in a certain time period (i.e. 24hr) is 400ppm
+and all other measurements are relative to that.
+
+**The following sensors were considered, but ultimately omitted:**
+
+| Sensor                 | Rated Accuracy              | Reason for omittence                                                                                |
+| ---------------------- | --------------------------- | --------------------------------------------------------------------------------------------------- |
+| MH-Z19C                | 50 ppm +- 5% of measurement | Has automatic baseline calibration                                                                  |
+| SCD-40                 | +-(50 ppm + 5% of reading)  | Inaccurate, outdoor ppm will only vary by 50-100ppm, so it will be hard to separate error from data |
+| Senseair S8 004-0-0053 | +- 3%                       | Cannot use in cold temperatures, rated operating range is 0C to 50C                                 |
+| CM1106SL               | +-(50 ppm + 5% of reading)  | Has automatic baseline calibration, but can be disabled. Is also pretty inaccurate for outdoor use  |
+| SDC-30                 | +-(30ppm + 3%)              | Slightly more accurate than others, but at a high cost: $58.95                                      |
+
+# Prototyping
+
+After the parts list was finalized, I
+
+## Temperature & Humidity
+
+### STHC3
+
+## Temperature

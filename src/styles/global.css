@@ -6,8 +6,9 @@
   --gray-light: 229, 233, 240;
   --gray-dark: 34, 41, 57;
   --gray-gradient: rgba(var(--gray-light), 10%), #fff;
-  --box-shadow: 0 2px 6px rgba(var(--gray), 25%),
-    0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);
+  --box-shadow:
+    0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
+    0 16px 32px rgba(var(--gray), 33%);
 }
 
 @font-face {
@@ -89,7 +90,25 @@ body {
   }
 
   table {
-    @apply w-full;
+    @apply w-full my-6 text-sm border-collapse;
+    /* narrow screens: let a wide table scroll instead of squishing the page */
+    @apply max-sm:block max-sm:overflow-x-auto;
+  }
+
+  thead {
+    @apply bg-white/[0.06];
+  }
+
+  th {
+    @apply border border-gray-700 px-3 py-2 text-left font-semibold text-white;
+  }
+
+  td {
+    @apply border border-gray-800 px-3 py-2 align-top;
+  }
+
+  tbody tr:nth-child(even) {
+    @apply bg-white/[0.02];
   }
 
   img {
@@ -117,9 +136,10 @@ body {
     @apply border-t-gray-400 border-t-2;
   }
 
+  /* list-outside so wrapped lines align with the text, not under the marker */
   ol,
   ul {
-    @apply list-inside pl-4 marker:dark:text-gray-400 pb-4;
+    @apply list-outside pl-8 marker:dark:text-gray-400 pb-4;
   }
 
   ol {
@@ -130,8 +150,18 @@ body {
     @apply list-disc;
   }
 
+  li {
+    @apply mb-1;
+  }
+
+  /* nested lists sit tight against their parent item */
+  li > ol,
+  li > ul {
+    @apply pb-0 pt-1;
+  }
+
   li > p {
-    @apply whitespace-pre-wrap inline-block align-top pt-1;
+    @apply mb-0;
   }
 }
 
