@@ -1,10 +1,11 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
+import { type CollectionEntry } from "astro:content";
+import { getPublished } from "../../utils/content";
 import BitPost from "../../layouts/BitPost.astro";
 import ExternalLink from "../../components/ExternalLink.astro";
 
 export async function getStaticPaths() {
-  const bits = await getCollection("bits");
+  const bits = await getPublished("bits");
   return bits.map((bit) => ({
     params: { slug: bit.slug },
     props: bit,

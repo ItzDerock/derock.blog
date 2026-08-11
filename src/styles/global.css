@@ -1,15 +1,35 @@
-:root {
-  --accent: #2337ff;
-  --accent-dark: #000d8a;
-  --black: 15, 18, 25;
-  --gray: 96, 115, 159;
-  --gray-light: 229, 233, 240;
-  --gray-dark: 34, 41, 57;
-  --gray-gradient: rgba(var(--gray-light), 10%), #fff;
-  --box-shadow:
-    0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
-    0 16px 32px rgba(var(--gray), 33%);
-}
+/*
+  DIRECTION CONTRACT - derock.blog
+
+  THESIS: This site is the fabrication drawing of the boards its author builds.
+  It refuses the dark-card developer blog with one neon accent, and refuses its
+  opposite, the cream-and-serif essay site.
+
+  OWN-WORLD: Warm matte-black solder mask, chalky silkscreen ink in two weights,
+  hairline copper traces, ENIG gold reserved for anything you can touch. Zones
+  are silkscreen boxes with legend labels; items carry reference designators;
+  corners carry fiducials. Line art only - never a photograph of a board.
+
+  STORY: A reader arrives deep-linked, mid-problem. The drawing tells them where
+  they are, what this page assumes, and how far it runs, then gets out of the
+  way of the prose. A short bio names the author and sends the curious to
+  derock.dev.
+
+  FIRST VIEWPORT: Header band as its own layer. Beneath it a bio plate, name
+  and one line, with the portfolio as the only gold pad in it. Then RECENT
+  POSTS as placed parts: authored cover art seated in a silkscreen outline,
+  designator above the title.
+
+  FORM: PCB fab drawing, candidate 4 of the ordered grounded list, staged with
+  the accumulating-precis spine (headings dock onto a copper trace as you read).
+  Seed key b1a397d0.
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Faces -------------------------------------------------------------- */
 
 @font-face {
   font-family: "Atkinson";
@@ -27,223 +47,459 @@
   font-display: swap;
 }
 
-body {
-  @apply text-base;
+@font-face {
+  font-family: "Archivo";
+  font-style: italic;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/archivo-italic-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF,
+    U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-/* Styles for post content */
-/*
-  Based off of Astro's blog template which is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
+@font-face {
+  font-family: "Archivo";
+  font-style: italic;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/archivo-italic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/archivo-normal-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF,
+    U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/archivo-normal-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-normal-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF,
+    U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-normal-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---- Board -------------------------------------------------------------- */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* the spine's active net should never sit under the header band */
+    scroll-padding-top: 5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    @apply bg-mask text-silk font-sans text-base;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: theme("colors.gold.DEFAULT");
+    color: theme("colors.mask.deep");
+  }
+
+  /* Native controls take the pad finish too. */
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"] {
+    accent-color: theme("colors.gold.DEFAULT");
+  }
+
+  /* Gold marks anything you can touch - including where the keyboard is. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-gold ring-offset-2 ring-offset-mask rounded-pad;
+  }
+}
+
+@layer components {
+  /* A legend label: silkscreen lettering set beside the thing it names. */
+  .legend {
+    @apply font-mono text-legend uppercase text-silk-dim;
+  }
+
+  /* A reference designator: R1, U3, FIG. 2 - copper, always mono. */
+  .designator {
+    @apply font-mono text-legend uppercase text-copper-light;
+  }
+
+  /* A silkscreen box: a hairline zone with its name set into the top rule. */
+  .zone {
+    @apply relative border border-silk-faint/45 rounded-part;
+  }
+
+  .zone-label {
+    @apply legend absolute -top-[0.55rem] left-3 bg-mask px-1.5;
+  }
+
+  /* A part seated on the board. */
+  .part {
+    @apply bg-mask-raised border border-silk-faint/35 rounded-part shadow-part;
+    transition:
+      border-color 140ms ease-out,
+      background-color 140ms ease-out;
+  }
+
+  a.part-link:hover .part,
+  a.part-link:focus-visible .part {
+    @apply border-copper;
+  }
+
+  /* An ENIG pad: the gold finish on a contact you can touch. */
+  .pad {
+    @apply text-gold no-underline;
+    border-bottom: 1px solid theme("colors.copper.deep");
+    transition:
+      color 140ms ease-out,
+      border-color 140ms ease-out;
+  }
+
+  .pad:hover {
+    @apply text-gold-bright;
+    border-bottom-color: theme("colors.gold.DEFAULT");
+  }
+
+  /* Controls on an instrument panel: legend-lettered, square, no chrome.
+     Shared by every interactive explainer so a widget never arrives dressed
+     in another design system. */
+  .control {
+    @apply font-mono text-legend uppercase rounded-pad border
+           border-silk-faint/40 bg-mask-deep px-2.5 py-1.5 text-silk-dim
+           transition-colors;
+  }
+
+  .control:hover:not(:disabled) {
+    @apply border-gold text-gold;
+  }
+
+  .control:disabled {
+    @apply cursor-not-allowed opacity-45;
+  }
+
+  .control-primary {
+    @apply control border-gold bg-gold text-mask-deep;
+  }
+
+  .control-primary:hover:not(:disabled) {
+    @apply border-gold-bright bg-gold-bright text-mask-deep;
+  }
+
+  .control-field {
+    @apply font-mono text-data rounded-pad border border-silk-faint/40
+           bg-mask-deep px-2 py-1 text-silk;
+  }
+
+  .control-field:focus {
+    @apply border-gold outline-none;
+  }
+
+  /* Copper pour: 45° hatching, the way an unrouted region is drawn. */
+  .pour {
+    background-image: repeating-linear-gradient(
+      45deg,
+      theme("colors.copper.deep") 0 1px,
+      transparent 1px 7px
+    );
+    opacity: 0.35;
+  }
+}
+
+/* ---- Post body ---------------------------------------------------------- */
 
 .post {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply text-black dark:text-white mb-2 leading-tight;
-  }
+  @apply text-base text-silk;
+}
 
-  h1 {
-    @apply text-3xl mt-8;
-  }
+.post > * {
+  @apply max-w-column mx-auto;
+}
 
-  h2 {
-    @apply text-2xl;
-  }
+/* Figures, code wells, tables and diagrams are placed parts: they may run
+   wider than the reading measure, the way a part outgrows its silkscreen. */
+.post > figure,
+.post > .expressive-code,
+.post > .table-scroll,
+.post > .mermaid,
+.post > canvas,
+.post > astro-island,
+.post > p:has(> img:only-child) {
+  @apply max-w-media;
+}
 
-  h3 {
-    @apply text-xl;
-  }
+.post h1,
+.post h2,
+.post h3,
+.post h4,
+.post h5,
+.post h6 {
+  @apply font-display text-silk scroll-mt-24;
+  text-wrap: balance;
+}
 
-  h4 {
-    @apply text-lg;
-  }
+/* Section headings carry the pad finish. They are the nets the spine links to
+   and the anchors a reader shares, so gold still means "you can touch this".
+   Sub-headings stay silkscreen, which keeps the hierarchy readable at a
+   glance instead of flooding a long post with accent. */
+.post h1[id],
+.post h2[id] {
+  @apply text-gold;
+}
 
-  h5 {
-    @apply text-lg;
-  }
+/* More space above a heading than below it. */
+.post h1 {
+  @apply text-3xl mt-[3.25rem] mb-3;
+}
 
-  strong,
-  b {
-    @apply font-bold;
-  }
+.post h2 {
+  @apply text-2xl mt-12 mb-3;
+}
 
-  a {
-    @apply text-blue-400 hover:text-blue-500;
-  }
+.post h3 {
+  @apply text-xl mt-10 mb-2;
+}
 
-  p {
-    @apply mb-4;
-  }
+.post h4,
+.post h5,
+.post h6 {
+  @apply text-lg mt-8 mb-2;
+}
 
-  .prose p {
-    @apply mb-8;
-  }
+/* A section heading is a spine net: the trace lands on it from the gutter. */
+.post h1,
+.post h2 {
+  @apply relative;
+}
 
-  textarea {
-    @apply w-full text-base;
-  }
+.post h1[id]::before,
+.post h2[id]::before {
+  content: "";
+  @apply absolute -left-5 top-[0.62em] hidden h-px w-3 bg-copper;
+}
 
-  table {
-    @apply w-full my-6 text-sm border-collapse;
-    /* narrow screens: let a wide table scroll instead of squishing the page */
-    @apply max-sm:block max-sm:overflow-x-auto;
-  }
-
-  thead {
-    @apply bg-white/[0.06];
-  }
-
-  th {
-    @apply border border-gray-700 px-3 py-2 text-left font-semibold text-white;
-  }
-
-  td {
-    @apply border border-gray-800 px-3 py-2 align-top;
-  }
-
-  tbody tr:nth-child(even) {
-    @apply bg-white/[0.02];
-  }
-
-  img {
-    @apply max-w-full h-auto rounded-lg;
-  }
-
-  code {
-    @apply px-1 py-[0.115rem] bg-gray-700/60 text-white rounded-sm inline-block box-content text-sm;
-  }
-
-  pre {
-    @apply p-4 rounded-lg mb-4;
-  }
-
-  pre > code {
-    all: unset;
-    @apply text-sm;
-  }
-
-  blockquote {
-    @apply border-l-4 border-blue-400 pl-4;
-  }
-
-  hr {
-    @apply border-t-gray-400 border-t-2;
-  }
-
-  /* list-outside so wrapped lines align with the text, not under the marker */
-  ol,
-  ul {
-    @apply list-outside pl-8 marker:dark:text-gray-400 pb-4;
-  }
-
-  ol {
-    @apply list-decimal;
-  }
-
-  ul {
-    @apply list-disc;
-  }
-
-  li {
-    @apply mb-1;
-  }
-
-  /* nested lists sit tight against their parent item */
-  li > ol,
-  li > ul {
-    @apply pb-0 pt-1;
-  }
-
-  li > p {
-    @apply mb-0;
+@media (min-width: 1024px) {
+  .post h1[id]::before,
+  .post h2[id]::before {
+    @apply block;
   }
 }
 
-/* Custom AOS distance */
-@media screen {
-  html:not(.no-js) [data-aos="fade-up"] {
-    -webkit-transform: translate3d(0, 10px, 0);
-    transform: translate3d(0, 10px, 0);
-  }
+.post p {
+  @apply mb-5;
+}
 
-  html:not(.no-js) [data-aos="fade-down"] {
-    -webkit-transform: translate3d(0, -10px, 0);
-    transform: translate3d(0, -10px, 0);
-  }
+.post strong,
+.post b {
+  @apply font-bold text-silk;
+}
 
-  html:not(.no-js) [data-aos="fade-right"] {
-    -webkit-transform: translate3d(-10px, 0, 0);
-    transform: translate3d(-10px, 0, 0);
-  }
+.post em {
+  @apply italic;
+}
 
-  html:not(.no-js) [data-aos="fade-left"] {
-    -webkit-transform: translate3d(10px, 0, 0);
-    transform: translate3d(10px, 0, 0);
-  }
+.post a {
+  @apply pad;
+}
 
-  html:not(.no-js) [data-aos="fade-up-right"] {
-    -webkit-transform: translate3d(-10px, 10px, 0);
-    transform: translate3d(-10px, 10px, 0);
-  }
+.post ol,
+.post ul {
+  @apply list-outside pl-7 mb-5 marker:text-copper-light;
+}
 
-  html:not(.no-js) [data-aos="fade-up-left"] {
-    -webkit-transform: translate3d(10px, 10px, 0);
-    transform: translate3d(10px, 10px, 0);
-  }
+.post ol {
+  @apply list-decimal;
+}
 
-  html:not(.no-js) [data-aos="fade-down-right"] {
-    -webkit-transform: translate3d(-10px, -10px, 0);
-    transform: translate3d(-10px, -10px, 0);
-  }
+.post ul {
+  @apply list-disc;
+}
 
-  html:not(.no-js) [data-aos="fade-down-left"] {
-    -webkit-transform: translate3d(10px, -10px, 0);
-    transform: translate3d(10px, -10px, 0);
-  }
+.post li {
+  @apply mb-1.5 pl-1;
+}
 
-  html:not(.no-js) [data-aos="zoom-in-up"] {
-    -webkit-transform: translate3d(0, 10px, 0) scale(0.6);
-    transform: translate3d(0, 10px, 0) scale(0.6);
-  }
+.post li > p {
+  @apply mb-0;
+}
 
-  html:not(.no-js) [data-aos="zoom-in-down"] {
-    -webkit-transform: translate3d(0, -10px, 0) scale(0.6);
-    transform: translate3d(0, -10px, 0) scale(0.6);
-  }
+.post li > ol,
+.post li > ul {
+  @apply mb-0 mt-1.5;
+}
 
-  html:not(.no-js) [data-aos="zoom-in-right"] {
-    -webkit-transform: translate3d(-10px, 0, 0) scale(0.6);
-    transform: translate3d(-10px, 0, 0) scale(0.6);
-  }
+.post blockquote {
+  @apply bg-mask-deep border border-silk-faint/35 rounded-part
+         py-4 px-5 mb-6 text-silk-dim;
+}
 
-  html:not(.no-js) [data-aos="zoom-in-left"] {
-    -webkit-transform: translate3d(10px, 0, 0) scale(0.6);
-    transform: translate3d(10px, 0, 0) scale(0.6);
-  }
+.post blockquote > :last-child {
+  @apply mb-0;
+}
 
-  html:not(.no-js) [data-aos="zoom-out-up"] {
-    -webkit-transform: translate3d(0, 10px, 0) scale(1.2);
-    transform: translate3d(0, 10px, 0) scale(1.2);
-  }
+/* Inline code is a recessed pad, not a highlighter swipe. */
+.post :not(pre) > code {
+  @apply font-mono text-code bg-mask-deep text-silk
+         border border-silk-faint/30 rounded-pad px-1.5 py-0.5;
+  word-break: break-word;
+}
 
-  html:not(.no-js) [data-aos="zoom-out-down"] {
-    -webkit-transform: translate3d(0, -10px, 0) scale(1.2);
-    transform: translate3d(0, -10px, 0) scale(1.2);
-  }
+.post hr {
+  @apply my-12 border-0 h-px bg-silk-faint/40;
+}
 
-  html:not(.no-js) [data-aos="zoom-out-right"] {
-    -webkit-transform: translate3d(-10px, 0, 0) scale(1.2);
-    transform: translate3d(-10px, 0, 0) scale(1.2);
-  }
+/* Tables read as a drill table. */
+.post .table-scroll {
+  @apply overflow-x-auto mb-6 border border-silk-faint/35 rounded-part;
+}
 
-  html:not(.no-js) [data-aos="zoom-out-left"] {
-    -webkit-transform: translate3d(10px, 0, 0) scale(1.2);
-    transform: translate3d(10px, 0, 0) scale(1.2);
-  }
+.post table {
+  @apply w-full border-collapse font-mono text-data;
+}
+
+.post thead {
+  @apply bg-mask-raised;
+}
+
+.post th {
+  @apply text-left legend text-silk px-3.5 py-2.5
+         border-b border-silk-faint/45 whitespace-nowrap;
+}
+
+.post td {
+  @apply px-3.5 py-2.5 align-top border-b border-silk-faint/20;
+}
+
+.post tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.post img {
+  @apply max-w-full h-auto rounded-pad;
+}
+
+/* Embeds arrive with fixed pixel widths and would otherwise be clipped on a
+   phone. Seat them like any other part. */
+.post iframe {
+  @apply block w-full max-w-full rounded-part border border-silk-faint/35 mb-7;
+}
+
+/* KaTeX runs at body size, not the browser's 1.21em default. */
+.post .katex {
+  font-size: 1.02em;
+}
+
+.post .katex-display {
+  @apply overflow-x-auto overflow-y-hidden py-2 mb-5;
+}
+
+/* Mermaid diagrams are drawings too - seat them on the board. */
+.post .mermaid,
+.post svg[id^="mermaid"] {
+  @apply mx-auto mb-6 max-w-full;
+}
+
+/* ---- Figures ------------------------------------------------------------ */
+
+/* Every figure is a placed part, whether the post authored it by hand as a
+   <figure> or a <center> block, or the pipeline built it from a standalone
+   image. Posts here use all three, so all three get the same treatment. */
+.post figure,
+.post center {
+  @apply mb-7 block;
+}
+
+.post figure > img,
+.post figure > video,
+.post center > img,
+.post center > video,
+.post center > picture > img,
+.post .figure-frame {
+  @apply mx-auto block overflow-hidden rounded-part border
+         border-silk-faint/35 bg-mask-deep shadow-part;
+}
+
+.post .figure-frame img,
+.post .figure-frame video {
+  @apply block h-auto w-full rounded-none border-0 shadow-none;
+}
+
+.post figure figcaption,
+.post figure > small,
+.post center > small {
+  @apply mt-2.5 block text-sm text-silk-dim;
+}
+
+.post figcaption .designator,
+.post small .designator {
+  @apply mr-2.5;
+}
+
+/* Probeable images say so on hover, and are reachable from the keyboard. */
+.post img.is-probeable {
+  @apply cursor-zoom-in;
+  transition: opacity 140ms ease-out;
+}
+
+.post img.is-probeable:hover {
+  opacity: 0.88;
+}
+
+dialog[data-probe-dialog]::backdrop {
+  background: rgb(0 0 0 / 0.82);
+}
+
+/* ---- Code wells --------------------------------------------------------- */
+
+.post .expressive-code {
+  @apply mb-7;
+}
+
+/* The filename plate reads as a silkscreen legend, not a browser tab. */
+.post .expressive-code .frame .header {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.post .expressive-code figcaption + pre,
+.post .expressive-code pre {
+  @apply border-silk-faint/35;
 }

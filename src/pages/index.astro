@@ -1,115 +1,69 @@
 ---
-import { getCollection } from "astro:content";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
-import SmallBlogCard from "../components/cards/SmallBlogCard.astro";
-import BitCard from "../components/cards/BitCard.astro";
-import BlogCardsContainer from "../components/solid/BlogCardsContainer";
+import { getPublished } from "../utils/content";
+import PostRow from "../components/cards/PostRow.astro";
+import BitRow from "../components/cards/BitRow.astro";
+import Zone from "../components/Zone.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import RootLayout from "../layouts/RootLayout.astro";
-import "aos/dist/aos.css";
 
-const allPosts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
-);
-const recentPosts = allPosts.slice(0, 3);
-
-const allBits = (await getCollection("bits")).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
-);
-const recentBits = allBits.slice(0, 3);
+const recentPosts = (await getPublished("blog")).slice(0, 3);
+const recentBits = (await getPublished("bits")).slice(0, 3);
 ---
 
-<!doctype html>
 <RootLayout meta={{ title: SITE_TITLE, description: SITE_DESCRIPTION }}>
-  <Header />
-  <main class="px-4">
-    <section class="max-w-3xl mx-auto mt-4">
-      <!-- Recent Posts -->
-      <div class="mb-10">
-        <div class="flex justify-between items-baseline mb-4">
-          <h2
-            class="text-xs font-medium tracking-[0.08em] uppercase text-gray-500"
-          >
-            Recent Posts
-          </h2>
-          <a
-            href="/posts"
-            class="text-xs text-gray-400 hover:text-white transition-colors"
-          >
-            all posts →
-          </a>
-        </div>
-        <BlogCardsContainer client:load>
-          {
-            recentPosts.map((post, i) => (
-              <SmallBlogCard blog={post} aosDelay={i * 150} />
-            ))
-          }
-        </BlogCardsContainer>
+  <div class="mx-auto w-full max-w-index px-5 pb-4 pt-8 lg:px-8">
+    <!-- Bio plate: who made this board, and where to read more. -->
+    <section
+      class="mb-12 rounded-part border border-silk-faint/40 bg-mask-raised
+             px-5 py-6 sm:px-7 sm:py-7"
+    >
+      <div class="mb-4 flex items-baseline gap-3">
+        <h2 class="legend text-copper-light">Author</h2>
+        <span aria-hidden="true" class="h-px flex-1 bg-silk-faint/35"></span>
       </div>
 
-      <!-- Recent Bits -->
-      <div class="mb-10">
-        <div class="flex justify-between items-baseline mb-4">
-          <h2
-            class="text-xs font-medium tracking-[0.08em] uppercase text-gray-500"
-          >
-            Recent{" "}
-            <span class="bits-label relative inline-block">
-              <span class="border-b border-dotted border-gray-500 cursor-help"
-                >bits</span
-              >
-              <span
-                class="bits-tooltip absolute bottom-full left-0 mb-2 w-64 p-2.5 text-xs bg-gray-800 border border-gray-700 rounded-md opacity-0 pointer-events-none normal-case tracking-normal font-normal leading-relaxed z-10 whitespace-normal shadow-lg"
-              >
-                Bits are short, informal TIL-style findings: quick discoveries,
-                tips, and observations that don't warrant a full post.
-              </span>
-            </span>
-          </h2>
-          <a
-            href="/bits"
-            class="text-xs text-gray-400 hover:text-white transition-colors"
-          >
-            all bits →
-          </a>
-        </div>
-        <BlogCardsContainer client:load>
-          {
-            recentBits.length > 0 ? (
-              recentBits.map((bit, i) => (
-                <BitCard bit={bit} aosDelay={i * 100} />
-              ))
-            ) : (
-              <p class="text-sm text-gray-500 py-4">
-                No bits yet — check back soon.
-              </p>
-            )
-          }
-        </BlogCardsContainer>
-      </div>
+      <h1 class="font-display text-3xl font-bold text-silk">Derock X.</h1>
+      <p class="mt-2.5 max-w-[46ch] text-silk-dim">
+        I build things that have to survive contact with the real world: a
+        3.4&nbsp;GHz video downlink for a rocket, competition robots, a home
+        server rack, the occasional CTF flag. This is where I write down how
+        they work.
+      </p>
+      <p class="mt-4">
+        <a href="https://derock.dev/?ref=blog" class="pad font-mono text-data">
+          more about me at derock.dev &rarr;
+        </a>
+      </p>
     </section>
-  </main>
-  <Footer />
+
+    <Zone label="Recent posts" href="/posts" linkLabel="all posts" class="mb-14">
+      <div class="flex flex-col gap-4">
+        {
+          recentPosts.map((post, i) => (
+            <PostRow blog={post} lead={i === 0} />
+          ))
+        }
+      </div>
+    </Zone>
+
+    <Zone label="Recent bits" href="/bits" linkLabel="all bits">
+      <p class="-mt-1 mb-4 text-sm text-silk-dim">
+        Short TIL-style findings: quick discoveries, tips, and observations that
+        don't warrant a full post.
+      </p>
+      {
+        recentBits.length > 0 ? (
+          <div class="flex flex-col gap-4">
+            {recentBits.map((bit) => (
+              <BitRow bit={bit} />
+            ))}
+          </div>
+        ) : (
+          <p class="zone px-5 py-6 text-sm text-silk-dim">
+            No bits yet. Check back soon.
+          </p>
+        )
+      }
+    </Zone>
+  </div>
 </RootLayout>
-
-<style>
-  .bits-label:hover .bits-tooltip {
-    opacity: 1;
-  }
-</style>
-
-<script>
-  import AOS from "aos";
-
-  AOS.init({
-    once: true,
-    disable:
-      /bot|crawler|spider|crawling/i.test(navigator.userAgent) ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    duration: 600,
-    easing: "ease-out-sine",
-    offset: 0,
-  });
-</script>

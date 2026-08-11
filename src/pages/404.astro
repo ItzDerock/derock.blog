@@ -1,0 +1,32 @@
+---
+import RootLayout from "../layouts/RootLayout.astro";
+---
+
+<RootLayout
+  meta={{
+    title: "Not found | derock.blog",
+    description: "That page isn't on this board.",
+  }}
+>
+  <div class="mx-auto w-full max-w-index px-5 py-20 lg:px-8">
+    <div class="mx-auto max-w-column">
+      <div class="mb-5 flex items-center gap-3">
+        <span class="designator text-dnp">DNP</span>
+        <span aria-hidden="true" class="h-px flex-1 bg-silk-faint/35"></span>
+        <span class="legend">404</span>
+      </div>
+
+      <h1 class="font-display text-4xl font-bold">Not populated</h1>
+      <p class="mt-4 text-silk-dim">
+        There's a footprint here, but nothing is placed on it. The page you
+        asked for doesn't exist, or it moved when the blog was rebuilt.
+      </p>
+
+      <div class="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+        <a href="/" class="pad font-mono text-data">&larr; home</a>
+        <a href="/posts" class="pad font-mono text-data">all posts</a>
+        <a href="/bits" class="pad font-mono text-data">all bits</a>
+      </div>
+    </div>
+  </div>
+</RootLayout>

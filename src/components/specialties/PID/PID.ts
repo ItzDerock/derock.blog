@@ -226,11 +226,17 @@ export class PID {
               ticks: {
                 display: false,
               },
+              grid: { color: "#5C3A1E59", drawTicks: false },
+              border: { color: "#5C3A1E" },
             },
             y: {
               ticks: {
                 display: true,
+                color: "#A39C8C",
+                font: { family: '"JetBrains Mono", ui-monospace, monospace', size: 10 },
               },
+              grid: { color: "#5C3A1E40", drawTicks: false },
+              border: { color: "#5C3A1E" },
             },
           },
         },
@@ -260,7 +266,8 @@ export class PID {
       ((this.prevError - leftBound) / (rightBound - leftBound)) *
       this.canvases.vis.width;
 
-    ctx.fillStyle = "#fff";
+    // the travel rail, drawn as a copper trace
+    ctx.fillStyle = "#5C3A1E";
     ctx.fillRect(0, PID.VIS_HEIGHT / 2 - 4, this.canvases.vis.width, 4);
 
     // draw an error bar
@@ -279,7 +286,7 @@ export class PID {
 
     // write position text
     ctx.fillStyle = PID_COLORS.POSITION_COLOR;
-    ctx.font = "14px sans-serif";
+    ctx.font = '11px "JetBrains Mono", ui-monospace, monospace';
     let positionText = this.position.toFixed(2);
     ctx.fillText(
       positionText,

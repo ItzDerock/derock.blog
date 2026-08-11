@@ -1,31 +1,79 @@
 ---
+const { pathname } = Astro.url;
 
+const routes = [
+  { href: "/posts", label: "posts", match: /^\/(posts|post)(\/|$)/ },
+  { href: "/bits", label: "bits", match: /^\/(bits|bit)(\/|$)/ },
+];
 ---
 
-<header>
+<!--
+  The header is its own layer: a raised band closed by a copper hairline.
+  This is what the flat single-surface version was missing.
+-->
+<header
+  class="sticky top-0 z-30 border-b border-copper/45 bg-mask-raised/95
+         backdrop-blur-[2px]"
+>
   <nav
-    class="py-5 flex flex-row max-w-3xl mx-auto items-center leading-none justify-between px-8 md:px-0"
+    class="mx-auto flex max-w-board flex-col gap-2 px-5 py-3
+           sm:flex-row sm:items-center sm:justify-between sm:gap-6 lg:px-8"
+    aria-label="Primary"
   >
     <a
       href="/"
-      class="flex flex-row items-center gap-2 text-base font-medium text-white hover:text-gray-300 transition-colors"
+      class="group flex w-fit flex-row items-center gap-2.5 text-silk
+             no-underline"
     >
       <img
         src="/icons/logo_64.webp"
-        alt="derock's logo"
-        class="h-7 w-auto opacity-80"
+        alt=""
+        width="26"
+        height="26"
+        class="h-[26px] w-auto"
       />
-      derock.blog
+      <span class="font-display text-lg font-bold leading-none">
+        derock<span class="text-copper-light">.blog</span>
+      </span>
     </a>
 
-    <div class="flex flex-row items-center gap-5 text-base text-gray-400">
-      <a href="/posts" class="hover:text-white transition-colors">posts</a>
-      <a href="/bits" class="hover:text-white transition-colors">bits</a>
+    <div class="flex flex-row flex-wrap items-center gap-x-5 gap-y-1">
+      {
+        routes.map((route) => {
+          const active = route.match.test(pathname);
+          return (
+            <a
+              href={route.href}
+              aria-current={active ? "page" : undefined}
+              class:list={[
+                "legend relative no-underline transition-colors",
+                active ? "text-gold" : "text-silk-dim hover:text-silk",
+              ]}
+            >
+              {active && (
+                <span
+                  aria-hidden="true"
+                  class="absolute -left-2.5 top-1/2 h-1 w-1 -translate-y-1/2
+                         rounded-full bg-gold"
+                />
+              )}
+              {route.label}
+            </a>
+          );
+        })
+      }
       <a
         href="https://derock.dev/?ref=blog"
-        class="hover:text-white transition-colors">portfolio</a
+        class="legend text-silk-dim no-underline transition-colors hover:text-silk"
       >
-      <a href="/rss.xml" class="hover:text-white transition-colors">rss</a>
+        portfolio
+      </a>
+      <a
+        href="/rss.xml"
+        class="legend text-silk-dim no-underline transition-colors hover:text-silk"
+      >
+        rss
+      </a>
     </div>
   </nav>
 </header>

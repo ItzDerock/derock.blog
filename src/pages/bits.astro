@@ -1,79 +1,44 @@
 ---
-import { getCollection } from "astro:content";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
-import BitCard from "../components/cards/BitCard.astro";
-import BlogCardsContainer from "../components/solid/BlogCardsContainer";
+import { getPublished } from "../utils/content";
+import BitRow from "../components/cards/BitRow.astro";
 import RootLayout from "../layouts/RootLayout.astro";
-import "aos/dist/aos.css";
 
-const bits = (await getCollection("bits")).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
-);
+const bits = await getPublished("bits");
 ---
 
 <RootLayout
   meta={{
-    title: "All Bits — derock.blog",
+    title: "Bits | derock.blog",
     description:
-      "Short TIL-style findings, quick discoveries, tips, and observations.",
+      "Short TIL-style findings: quick discoveries, tips, and observations.",
   }}
 >
-  <Header />
-  <main class="px-4">
-    <section class="max-w-3xl mx-auto mt-6 mb-12">
-      <a
-        href="/"
-        class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mb-6"
-      >
-        ← home
-      </a>
-      <div class="flex justify-between items-baseline mb-2">
-        <h1 class="text-xl font-bold">
-          Bits
-          <span class="text-sm font-normal text-gray-400 ml-2">
-            short TIL-style findings
-          </span>
-        </h1>
-        <span class="text-sm text-gray-400">{bits.length} bits</span>
+  <div class="mx-auto w-full max-w-index px-5 pb-4 pt-8 lg:px-8">
+    <header class="mb-8">
+      <div class="mb-3 flex items-baseline gap-3">
+        <span class="legend text-copper-light">Test points</span>
+        <span aria-hidden="true" class="h-px flex-1 bg-silk-faint/35"></span>
+        <span class="legend">{bits.length} bits</span>
       </div>
+      <h1 class="font-display text-3xl font-bold text-silk">Bits</h1>
+      <p class="mt-2 max-w-[52ch] text-silk-dim">
+        Short TIL-style findings: quick discoveries, tips, and observations that
+        don't warrant a full post.
+      </p>
+    </header>
 
-      <div class="mt-4">
-        {
-          bits.length > 0 ? (
-            <BlogCardsContainer client:load>
-              {bits.map((bit, i) => (
-                <BitCard bit={bit} aosDelay={i * 80} />
-              ))}
-            </BlogCardsContainer>
-          ) : (
-            <p class="text-gray-500 py-8 text-center">
-              No bits yet — check back soon.
-            </p>
-          )
-        }
-      </div>
-      <a
-        href="/"
-        class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mt-6"
-      >
-        ← home
-      </a>
-    </section>
-  </main>
-  <Footer />
+    {
+      bits.length > 0 ? (
+        <div class="flex flex-col gap-4">
+          {bits.map((bit) => (
+            <BitRow bit={bit} />
+          ))}
+        </div>
+      ) : (
+        <p class="zone px-5 py-6 text-sm text-silk-dim">
+          No bits yet. Check back soon.
+        </p>
+      )
+    }
+  </div>
 </RootLayout>
-
-<script>
-  import AOS from "aos";
-
-  AOS.init({
-    once: true,
-    disable:
-      /bot|crawler|spider|crawling/i.test(navigator.userAgent) ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    duration: 600,
-    easing: "ease-out-sine",
-    offset: 0,
-  });
-</script>

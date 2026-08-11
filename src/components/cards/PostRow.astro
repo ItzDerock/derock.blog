@@ -1,0 +1,116 @@
+---
+import { Image } from "astro:assets";
+import { type CollectionEntry } from "astro:content";
+import { format } from "date-fns/format";
+import { getDesignator } from "../../utils/designator";
+
+interface Props {
+  blog: CollectionEntry<"blog">;
+  /** The lead row on an index gets its cover art at full width. */
+  lead?: boolean;
+}
+
+const { blog, lead = false } = Astro.props;
+const date = format(blog.data.pubDate, "yyyy.MM.dd");
+const designator = await getDesignator("blog", blog.slug);
+const hero = blog.data.heroImage;
+---
+
+<!--
+  A placed part. The authored cover art is the largest thing in the row,
+  because it was made for the post; the designator names the part.
+
+  A side row's height is FIXED to its cover art, not derived from its text.
+  The row is h-48 (192px) and its 1px rules leave 190px inside, so the image
+  column is 23.75rem (380px): exactly 2:1 against that 190, not against the
+  192 the row is nominally tall. The divider hangs off the text column rather
+  than the image column for the same reason, since a border on the image side
+  would eat into its 380 and leave the box at 1.995. So the
+  image fills its column precisely and is never cropped. That width is chosen
+  by the text, not by taste: at 2:1 it makes the row tall enough to hold a
+  two-line title over a three-line description, which covers every post here
+  with headroom to spare. Text clamps to those limits and whatever slack is
+  left lands in the text column, where the card's own surface makes it
+  invisible. Sizing the row off the text instead is what produced the earlier
+  mismatch: art filled some rows exactly and left a dead band in others,
+  which read as imprecision.
+-->
+<a href={`/post/${blog.slug}`} class="part-link group block no-underline">
+  <article
+    class:list={[
+      "part overflow-hidden",
+      lead ? "flex flex-col" : "flex flex-col sm:h-48 sm:flex-row",
+    ]}
+  >
+    {
+      hero && (
+        <div
+          class:list={[
+            "shrink-0 overflow-hidden",
+            lead
+              ? "w-full border-b border-silk-faint/30"
+              : "w-full border-b border-silk-faint/30 sm:h-full sm:w-[23.75rem] sm:border-b-0",
+          ]}
+        >
+          <Image
+            src={hero}
+            alt=""
+            width={lead ? 1160 : 768}
+            height={lead ? 580 : 384}
+            loading={lead ? "eager" : "lazy"}
+            class:list={[
+              "w-full object-cover",
+              lead ? "aspect-[2/1]" : "aspect-[2/1] sm:aspect-auto sm:h-full",
+            ]}
+          />
+        </div>
+      )
+    }
+
+    <div
+      class:list={[
+        "flex min-w-0 flex-1 flex-col gap-1.5 overflow-hidden",
+        lead ? "p-5 sm:p-6" : "p-4 sm:border-l sm:border-silk-faint/30",
+      ]}
+    >
+      <div class="flex items-center justify-between gap-3">
+        <span
+          class="designator transition-colors group-hover:text-gold"
+          >{designator}</span
+        >
+        <time
+          datetime={blog.data.pubDate.toISOString()}
+          class="font-mono text-legend text-silk-dim">{date}</time
+        >
+      </div>
+
+      <h3
+        class:list={[
+          "font-display font-bold text-silk transition-colors",
+          "group-hover:text-gold-bright",
+          lead ? "text-2xl" : "line-clamp-2 text-xl",
+        ]}
+      >
+        {blog.data.title}
+      </h3>
+
+      <p
+        class:list={["text-sm text-silk-dim", lead ? "" : "line-clamp-3"]}
+      >
+        {blog.data.description}
+      </p>
+
+      {
+        lead && blog.data.tags.length > 0 && (
+          <ul class="mt-1 flex flex-wrap gap-1.5">
+            {blog.data.tags.map((tag) => (
+              <li class="legend rounded-pad border border-silk-faint/30 px-1.5 py-0.5">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </article>
+</a>

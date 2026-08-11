@@ -16,17 +16,25 @@ const { title, description, image = "/thumbs/hero.webp", tags } = Astro.props;
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=0.8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 <meta name="generator" content={Astro.generator} />
 <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+<link rel="alternate" type="application/rss+xml" title="derock.blog" href="/rss.xml" />
 
-<!-- Font preloads -->
+<!-- Font preloads: the reading face and the technical lettering -->
 <link
   rel="preload"
-  href="/fonts/atkinson-regular.woff"
+  href="/fonts/archivo-normal-latin.woff2"
   as="font"
-  type="font/woff"
+  type="font/woff2"
+  crossorigin
+/>
+<link
+  rel="preload"
+  href="/fonts/jetbrains-mono-normal-latin.woff2"
+  as="font"
+  type="font/woff2"
   crossorigin
 />
 <link
@@ -45,12 +53,14 @@ const { title, description, image = "/thumbs/hero.webp", tags } = Astro.props;
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 <meta name="author" content={SITE_AUTHOR} />
-<meta name="keywords" content={tags?.join(", ")} />
-<meta name="theme-color" content="#EFC15F" />
+{tags && tags.length > 0 && <meta name="keywords" content={tags.join(", ")} />}
+<meta name="theme-color" content="#14120F" />
+<meta name="color-scheme" content="dark" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={Astro.url} />
+<meta property="og:site_name" content="derock.blog" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={new URL(image, Astro.url)} />

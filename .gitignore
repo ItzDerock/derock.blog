@@ -30,3 +30,6 @@ devenv.local.nix
 
 # pre-commit
 .pre-commit-config.yaml
+
+# impeccable local state (live-session journals)
+.impeccable/

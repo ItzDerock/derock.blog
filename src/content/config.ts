@@ -11,6 +11,9 @@ const blog = defineCollection({
     updatedDate: z.coerce.date().optional(),
     heroImage: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    // Unfinished work. Drafts never reach the site: no listing, no feed, no
+    // route, no reference designator.
+    draft: z.boolean().default(false),
   }),
 });
 
@@ -24,6 +27,7 @@ const bits = defineCollection({
     updatedDate: z.coerce.date().optional(),
     heroImage: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
   }),
 });
 

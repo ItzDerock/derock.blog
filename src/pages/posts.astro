@@ -1,64 +1,48 @@
 ---
-import { getCollection } from "astro:content";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
-import SmallBlogCard from "../components/cards/SmallBlogCard.astro";
-import BlogCardsContainer from "../components/solid/BlogCardsContainer";
+import { getPublished } from "../utils/content";
+import PostRow from "../components/cards/PostRow.astro";
 import RootLayout from "../layouts/RootLayout.astro";
-import "aos/dist/aos.css";
 
-const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
-);
+const posts = await getPublished("blog");
+
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 ---
 
 <RootLayout
   meta={{
-    title: "All Posts — derock.blog",
-    description: `${posts.length} blog posts covering embedded systems, infrastructure, security, and more.`,
+    title: "All posts | derock.blog",
+    description: `${posts.length} posts covering embedded systems, RF, robotics, infrastructure, and security.`,
   }}
 >
-  <Header />
-  <main class="px-4">
-    <section class="max-w-3xl mx-auto mt-6 mb-12">
-      <a
-        href="/"
-        class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mb-6"
-      >
-        ← home
-      </a>
-      <div class="flex justify-between items-baseline mb-6">
-        <h1 class="text-xl font-bold">All Posts</h1>
-        <span class="text-sm text-gray-400">{posts.length} posts</span>
+  <div class="mx-auto w-full max-w-index px-5 pb-4 pt-8 lg:px-8">
+    <header class="mb-8">
+      <div class="mb-3 flex items-baseline gap-3">
+        <span class="legend text-copper-light">Parts list</span>
+        <span aria-hidden="true" class="h-px flex-1 bg-silk-faint/35"></span>
+        <span class="legend">{posts.length} posts</span>
       </div>
-      <BlogCardsContainer client:load>
-        {
-          posts.map((post, i) => (
-            <SmallBlogCard blog={post} aosDelay={i * 100} />
-          ))
-        }
-      </BlogCardsContainer>
-      <a
-        href="/"
-        class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors mt-6"
-      >
-        ← home
-      </a>
-    </section>
-  </main>
-  <Footer />
+      <h1 class="font-display text-3xl font-bold text-silk">All posts</h1>
+    </header>
+
+    {
+      tags.length > 0 && (
+        <nav aria-label="Tags" class="mb-8 flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <a
+              href={`/tags/${tag}`}
+              class="legend rounded-pad border border-silk-faint/35 px-2 py-1
+                     text-silk-dim no-underline transition-colors
+                     hover:border-gold hover:text-gold"
+            >
+              {tag}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+
+    <div class="flex flex-col gap-4">
+      {posts.map((post) => <PostRow blog={post} />)}
+    </div>
+  </div>
 </RootLayout>
-
-<script>
-  import AOS from "aos";
-
-  AOS.init({
-    once: true,
-    disable:
-      /bot|crawler|spider|crawling/i.test(navigator.userAgent) ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    duration: 600,
-    easing: "ease-out-sine",
-    offset: 0,
-  });
-</script>

@@ -1,0 +1,53 @@
+---
+import { type CollectionEntry } from "astro:content";
+import { format } from "date-fns/format";
+import { getDesignator } from "../../utils/designator";
+
+interface Props {
+  bit: CollectionEntry<"bits">;
+}
+
+const { bit } = Astro.props;
+const date = format(bit.data.pubDate, "yyyy.MM.dd");
+const designator = await getDesignator("bits", bit.slug);
+---
+
+<!-- A test point: small, probed once, never dressed up as a full part. -->
+<a href={`/bit/${bit.slug}`} class="part-link group block no-underline">
+  <article class="part flex flex-col gap-1.5 p-4 sm:p-5">
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+      <span class="designator transition-colors group-hover:text-gold"
+        >{designator}</span
+      >
+      <time
+        datetime={bit.data.pubDate.toISOString()}
+        class="font-mono text-legend text-silk-dim">{date}</time
+      >
+    </div>
+
+    <h3
+      class="font-display text-lg font-bold text-silk transition-colors
+             group-hover:text-gold-bright"
+    >
+      {bit.data.title}
+    </h3>
+
+    {
+      bit.data.description && (
+        <p class="text-sm text-silk-dim">{bit.data.description}</p>
+      )
+    }
+
+    {
+      bit.data.tags.length > 0 && (
+        <ul class="mt-1 flex flex-wrap gap-1.5">
+          {bit.data.tags.map((tag) => (
+            <li class="legend rounded-pad border border-silk-faint/30 px-1.5 py-0.5">
+              {tag}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </article>
+</a>

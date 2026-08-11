@@ -61,15 +61,15 @@ const BAR_W = PLOT_W / SAMPLES;
 
 const scaleY = (kbps: number) => (kbps / TOTAL_KBPS) * PLOT_H;
 
-const VIDEO_FILL = "#3b82f6";
-const REPAIR_FILL = "#6ee7b7";
+const VIDEO_FILL = "#E6B450";
+const REPAIR_FILL = "#9DB88F";
 
 const LinkBudget = () => (
-  <div class="my-6 rounded-lg border border-gray-800 bg-card-background p-4 shadow-sm">
-    <div class="text-sm font-semibold text-white">
+  <div class="my-6 rounded-part border border-silk-faint/35 bg-mask-raised p-4 shadow-sm">
+    <div class="text-sm font-semibold text-silk">
       The radio always transmits {(TOTAL_KBPS / 1000).toFixed(2)} Mb/s
     </div>
-    <div class="mb-3 text-[0.85rem] text-gray-400">
+    <div class="mb-3 text-sm text-silk-dim">
       Video takes what it needs, RaptorQ repair packets take the rest.
     </div>
 
@@ -83,7 +83,7 @@ const LinkBudget = () => (
               y={BASELINE - scaleY(mb * 1000) + 3.5}
               text-anchor="end"
               font-size="10"
-              fill="#94a3b8"
+              fill="#A39C8C"
             >
               {mb}
             </text>
@@ -92,7 +92,7 @@ const LinkBudget = () => (
               x2={PAD_L}
               y1={BASELINE - scaleY(mb * 1000)}
               y2={BASELINE - scaleY(mb * 1000)}
-              stroke="#334155"
+              stroke="#5C3A1E"
               stroke-width="1"
             />
           </>
@@ -103,7 +103,7 @@ const LinkBudget = () => (
         y={PAD_T - 8}
         text-anchor="end"
         font-size="9"
-        fill="#64748b"
+        fill="#A39C8C"
       >
         Mb/s
       </text>
@@ -143,11 +143,11 @@ const LinkBudget = () => (
         x2={W - PAD_R}
         y1={PAD_T}
         y2={PAD_T}
-        stroke="#e2e8f0"
+        stroke="#E9E4D7"
         stroke-width="1"
         stroke-dasharray="4 3"
       />
-      <text x={PAD_L} y={PAD_T - 6} font-size="10" fill="#e2e8f0">
+      <text x={PAD_L} y={PAD_T - 6} font-size="10" fill="#E9E4D7">
         3.59 Mb/s on air
       </text>
 
@@ -165,7 +165,7 @@ const LinkBudget = () => (
               x2={x}
               y1={PAD_T}
               y2={BASELINE}
-              stroke="#0f172a"
+              stroke="#0C0B09"
               stroke-width="1.5"
             />
           );
@@ -177,14 +177,14 @@ const LinkBudget = () => (
         x2={W - PAD_R}
         y1={BASELINE}
         y2={BASELINE}
-        stroke="#334155"
+        stroke="#5C3A1E"
         stroke-width="1"
       />
     </svg>
 
     {/* phase strip, widths proportional to how long each phase lasts */}
     <div
-      class="mt-1 flex gap-[2px] text-[0.75rem]"
+      class="mt-1 flex gap-[2px] text-xs"
       style={{
         "margin-left": `${(PAD_L / W) * 100}%`,
         "margin-right": `${(PAD_R / W) * 100}%`,
@@ -193,7 +193,7 @@ const LinkBudget = () => (
       <For each={PHASES}>
         {(phase) => (
           <div
-            class="min-w-0 truncate rounded-sm bg-gray-800 px-1 py-[0.15rem] text-center text-gray-300"
+            class="min-w-0 truncate rounded-pad bg-mask-deep px-1 py-[0.15rem] text-center text-silk-dim"
             style={{ width: `${(phase.samples / SAMPLES) * 100}%` }}
             title={phase.label}
           >
@@ -203,15 +203,15 @@ const LinkBudget = () => (
       </For>
     </div>
 
-    <div class="mt-3 flex flex-wrap items-center gap-4 text-[0.85rem]">
-      <span class="flex items-center gap-2 text-gray-300">
+    <div class="mt-3 flex flex-wrap items-center gap-4 text-sm">
+      <span class="flex items-center gap-2 text-silk-dim">
         <span
           class="inline-block h-3 w-3 rounded-[2px]"
           style={{ background: VIDEO_FILL }}
         />
         H.265 video
       </span>
-      <span class="flex items-center gap-2 text-gray-300">
+      <span class="flex items-center gap-2 text-silk-dim">
         <span
           class="inline-block h-3 w-3 rounded-[2px]"
           style={{ background: REPAIR_FILL }}
@@ -220,7 +220,7 @@ const LinkBudget = () => (
       </span>
     </div>
 
-    <div class="mt-3 text-[0.85rem] text-gray-500">
+    <div class="mt-3 text-sm text-silk-dim">
       Sitting on the pad, the picture barely changes and {maxRepairPct}% of the
       link is repair data. Under motor burn the encoder hits its ceiling and
       repair falls to {minRepairPct}%, still enough to lose a third of the

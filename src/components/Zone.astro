@@ -1,0 +1,28 @@
+---
+interface Props {
+  /** The legend set into the top rule, the way a silkscreen box names a part. */
+  label: string;
+  /** Optional link on the right of the rule. */
+  href?: string;
+  linkLabel?: string;
+  class?: string;
+}
+
+const { label, href, linkLabel, class: className } = Astro.props;
+---
+
+<section class:list={["relative", className]}>
+  <div class="mb-4 flex items-baseline gap-3">
+    <h2 class="legend text-silk">{label}</h2>
+    <span aria-hidden="true" class="h-px flex-1 bg-silk-faint/35"></span>
+    {
+      href && (
+        <a href={href} class="legend text-copper-light no-underline hover:text-gold">
+          {linkLabel ?? "all"} &rarr;
+        </a>
+      )
+    }
+  </div>
+
+  <slot />
+</section>

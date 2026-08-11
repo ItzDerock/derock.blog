@@ -201,11 +201,11 @@ const PIDControlPanel = (props: {
 
   return (
     <div class="md:max-w-none max-w-xl mx-auto py-4" ref={divRef}>
-      <div class="border border-gray-800 rounded-lg p-4 bg-card-background shadow-sm relative flex flex-col gap-4 md:flex-row">
+      <div class="part relative flex flex-col gap-4 p-4 md:flex-row">
         <div class="max-w-xl w-full">
           <Show when={isNotSupported()}>
             <div class="inset-0 absolute mt-4">
-              <div class="text-red-500 text-center">
+              <div class="text-center text-dnp">
                 {isNotSupported()}
                 <br />
                 Modern browsers released after 2023 should support this feature.
@@ -213,7 +213,7 @@ const PIDControlPanel = (props: {
             </div>
           </Show>
           <noscript>
-            <div class="text-red-500 text-center">
+            <div class="text-center text-dnp">
               This feature requires JavaScript to be enabled.
             </div>
           </noscript>
@@ -223,9 +223,7 @@ const PIDControlPanel = (props: {
         </div>
 
         <div>
-          <h2 class="!text-sm !text-gray-300 font-semibold mt-4">
-            Key &amp; Config
-          </h2>
+          <h2 class="legend !text-legend mt-1 !text-copper-light">Key &amp; config</h2>
 
           <div class="grid md:grid-cols-1 grid-cols-3 gap-4">
             <div class="grid md:grid-cols-1 grid-cols-2  col-span-2 md:col-span-1">
@@ -244,10 +242,11 @@ const PIDControlPanel = (props: {
                   </Show>
                   <label
                     for={`show-${component}`}
-                    class="capitalize ml-1 align-middle"
+                    class="ml-1 inline-flex items-center gap-1.5 align-middle
+                           font-mono text-legend uppercase text-silk-dim"
                   >
                     <span
-                      class="w-3 h-3 mr-1 rounded-full"
+                      class="inline-block h-2.5 w-2.5 rounded-[1px]"
                       style={{
                         "background-color":
                           PID_COLORS[
@@ -265,7 +264,7 @@ const PIDControlPanel = (props: {
 
             <div>
               {(["p", "i", "d"] as const).map((component) => (
-                <div class="slider-container flex flex-row gap-1 font-mono align-middle">
+                <div class="slider-container flex flex-row items-center gap-2 font-mono">
                   <span class="slider-label">k{component.toUpperCase()}</span>
 
                   <input
@@ -273,25 +272,19 @@ const PIDControlPanel = (props: {
                     step="0.1"
                     value={pidKValues()[`k${component}`]}
                     oninput={setKValue(component)}
-                    class="text-sm bg-background rounded-md p-1 max-w-32"
+                    class="control-field w-full min-w-0 max-w-32"
                     disabled={props.disableControls}
                   />
                 </div>
               ))}
 
-              <button
-                class="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 block"
-                onclick={resetAll}
-              >
-                Reset Simulation
+              <button class="control mt-3 block" onclick={resetAll}>
+                Reset simulation
               </button>
 
               <Show when={!props.disableControls}>
-                <button
-                  class="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 block"
-                  onclick={resetPosition}
-                >
-                  Reset Position
+                <button class="control mt-2 block" onclick={resetPosition}>
+                  Reset position
                 </button>
               </Show>
             </div>

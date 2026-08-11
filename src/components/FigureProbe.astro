@@ -1,0 +1,83 @@
+---
+// Probing a figure: press a placed image to inspect it full size, the way you
+// put a probe on a test point. Images stay fully usable if this never loads.
+---
+
+<dialog
+  data-probe-dialog
+  class="max-h-[92vh] max-w-[94vw] border border-silk-faint/40 bg-mask-deep
+         p-0 text-silk backdrop:bg-black/80 rounded-part"
+>
+  <form method="dialog" class="contents">
+    <button
+      type="submit"
+      aria-label="Close figure"
+      class="legend absolute right-2 top-2 z-10 rounded-pad border
+             border-silk-faint/40 bg-mask-raised px-2 py-1 text-silk-dim
+             transition-colors hover:border-gold hover:text-gold"
+    >
+      close
+    </button>
+  </form>
+  {/* The artwork is created on open - there is no image to show until a
+      figure is actually probed. */}
+  <div data-probe-slot class="min-h-[4rem]"></div>
+  <p
+    data-probe-caption
+    class="border-t border-silk-faint/30 px-4 py-2.5 text-sm text-silk-dim
+           empty:hidden"
+  >
+  </p>
+</dialog>
+
+<script>
+  const dialog =
+    document.querySelector<HTMLDialogElement>("[data-probe-dialog]");
+  const slot = dialog?.querySelector<HTMLElement>("[data-probe-slot]");
+  const caption = dialog?.querySelector<HTMLElement>("[data-probe-caption]");
+
+  if (dialog && slot && caption && typeof dialog.showModal === "function") {
+    const target = document.createElement("img");
+    target.className = "block max-h-[86vh] w-auto max-w-full";
+    slot.appendChild(target);
+
+    // Pipeline-marked images, plus artwork a post placed by hand inside a
+    // <figure> or <center> - MDX components never reach the rehype pass.
+    const probes = document.querySelectorAll<HTMLImageElement>(
+      ".post img[data-probe], .post figure img, .post center img"
+    );
+
+    probes.forEach((image) => {
+      image.classList.add("is-probeable");
+      image.tabIndex = 0;
+      image.setAttribute("role", "button");
+      image.setAttribute("aria-label", `Inspect figure: ${image.alt || "image"}`);
+
+      const open = () => {
+        target.src = image.currentSrc || image.src;
+        target.alt = image.alt;
+        caption.textContent =
+          image.closest("figure")?.querySelector("figcaption")?.textContent ??
+          "";
+        dialog.showModal();
+      };
+
+      image.addEventListener("click", open);
+      image.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          open();
+        }
+      });
+    });
+
+    // click outside the artwork closes it
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener("close", () => {
+      target.removeAttribute("src");
+    });
+  }
+</script>

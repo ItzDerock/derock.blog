@@ -1,8 +1,12 @@
 ---
-import BaseHead, { type Props as BaseHeadProps } from "../components/BaseHead.astro";
+import BaseHead, {
+  type Props as BaseHeadProps,
+} from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 
 interface Props {
-  meta: BaseHeadProps; 
+  meta: BaseHeadProps;
 }
 
 const headProps = Astro.props.meta;
@@ -12,9 +16,44 @@ const headProps = Astro.props.meta;
   <head>
     <BaseHead {...headProps} />
   </head>
-  <body
-    class="mx-auto min-h-screen dark dark:bg-background dark:text-white px-1 md:px-4"
-  >
-    <slot />
+  <body class="min-h-screen bg-mask text-silk">
+    <!--
+      The board: everything sits inside a routed outline with a keep-out
+      margin, and the four corners carry fiducials the way a real board does.
+    -->
+    <div
+      class="board relative mx-auto flex min-h-screen max-w-board flex-col
+             lg:border-x lg:border-silk-faint/25"
+    >
+      {/* Fiducials - the alignment marks a pick-and-place machine reads. */}
+      <span class="fiducial left-[-3px] top-3.5"></span>
+      <span class="fiducial right-[-3px] top-3.5"></span>
+      <span class="fiducial bottom-3.5 left-[-3px]"></span>
+      <span class="fiducial bottom-3.5 right-[-3px]"></span>
+
+      <Header />
+      <main id="top" class="flex-1">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+
+    <style>
+      .fiducial {
+        display: none;
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-radius: 9999px;
+        background: #5c3a1e;
+        pointer-events: none;
+      }
+
+      @media (min-width: 1024px) {
+        .fiducial {
+          display: block;
+        }
+      }
+    </style>
   </body>
 </html>

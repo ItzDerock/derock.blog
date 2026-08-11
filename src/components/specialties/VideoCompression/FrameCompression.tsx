@@ -28,19 +28,19 @@ const KEYFRAME_KB = 40;
 const DELTA_BASE_KB = 1.2;
 const DELTA_PER_BLOCK_KB = 0.45;
 
-const SKY = "#131f36";
-const SKY_HIGH = "#0e1729";
-const SUN = "#facc15";
-const CLOUD = "#33456b";
-const GROUND = "#1b3a2b";
-const HORIZON = "#245139";
-const TREE = "#3f7a4f";
-const BODY = "#e5e7eb";
-const NOSE = "#94a3b8";
-const FLAME = "#f59e0b";
+const SKY = "#1D1A15";
+const SKY_HIGH = "#14120F";
+const SUN = "#FFD98A";
+const CLOUD = "#5C3A1E";
+const GROUND = "#2A3326";
+const HORIZON = "#3E4A36";
+const TREE = "#9DB88F";
+const BODY = "#E9E4D7";
+const NOSE = "#A39C8C";
+const FLAME = "#E6B450";
 
-const NOT_SENT = "#0b1220";
-const SENT_RING = "#38bdf8";
+const NOT_SENT = "#0C0B09";
+const SENT_RING = "#7FB6C4";
 
 /** Static furniture: a sun, a cloud, two trees. None of it ever changes. */
 const SUN_CELLS: [number, number][] = [
@@ -127,7 +127,7 @@ const BlockGrid = (props: {
 }) => (
   <svg
     viewBox={`0 0 ${COLS * CELL} ${ROWS * CELL}`}
-    class="w-full rounded-md bg-[#0b1220]"
+    class="w-full rounded-part bg-[#0C0B09]"
     role="img"
   >
     <For each={props.cells}>
@@ -171,22 +171,22 @@ const Panel = (props: {
   blocks: string;
   size: string;
 }) => (
-  <div class="rounded-md border border-gray-800 bg-background/40 p-3">
+  <div class="rounded-part border border-silk-faint/35 bg-background/40 p-3">
     <div class="flex items-baseline justify-between gap-2">
-      <span class="text-sm font-semibold text-white">{props.title}</span>
+      <span class="text-sm font-semibold text-silk">{props.title}</span>
       <span
-        class={`rounded px-2 py-[0.1rem] text-[0.85rem] ${props.badgeClass}`}
+        class={`rounded px-2 py-[0.1rem] text-sm ${props.badgeClass}`}
       >
         {props.badge}
       </span>
     </div>
-    <div class="mb-2 text-[0.85rem] text-gray-400">{props.subtitle}</div>
+    <div class="mb-2 text-sm text-silk-dim">{props.subtitle}</div>
 
     <BlockGrid cells={props.cells} sent={props.sentMask} />
 
     <div class="mt-2 flex items-baseline justify-between text-sm">
-      <span class="text-gray-400">{props.blocks}</span>
-      <span class="font-mono text-white">{props.size}</span>
+      <span class="text-silk-dim">{props.blocks}</span>
+      <span class="font-mono text-silk">{props.size}</span>
     </div>
   </div>
 );
@@ -238,14 +238,14 @@ const FrameCompression = () => {
   return (
     <div
       ref={containerRef}
-      class="my-6 rounded-lg border border-gray-800 bg-card-background p-4 shadow-sm"
+      class="my-6 rounded-part border border-silk-faint/35 bg-mask-raised p-4 shadow-sm"
     >
       <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <div class="text-sm font-semibold text-white">
+          <div class="text-sm font-semibold text-silk">
             Sending the same 12 frames two ways
           </div>
-          <div class="text-[0.85rem] text-gray-400">
+          <div class="text-sm text-silk-dim">
             Lit blocks are what actually goes on the air. On the right, only the
             blocks outlined in cyan get transmitted.
           </div>
@@ -253,26 +253,26 @@ const FrameCompression = () => {
 
         <div class="flex items-center gap-2 text-sm">
           <button
-            class="rounded bg-gray-800 px-2 py-1 text-white hover:bg-gray-700"
+            class="control"
             onclick={() => step(-1)}
             aria-label="Previous frame"
           >
             &#8592;
           </button>
           <button
-            class="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
+            class="control-primary"
             onclick={() => setPlaying((p) => !p)}
           >
             {playing() ? "Pause" : "Play"}
           </button>
           <button
-            class="rounded bg-gray-800 px-2 py-1 text-white hover:bg-gray-700"
+            class="control"
             onclick={() => step(1)}
             aria-label="Next frame"
           >
             &#8594;
           </button>
-          <span class="ml-1 font-mono text-[0.85rem] text-gray-400">
+          <span class="ml-1 font-mono text-sm text-silk-dim">
             frame {frame() + 1}/{FRAMES}
           </span>
         </div>
@@ -306,22 +306,22 @@ const FrameCompression = () => {
       </div>
 
       <div class="mt-4">
-        <div class="mb-1 text-[0.85rem] text-gray-400">
+        <div class="mb-1 text-sm text-silk-dim">
           Data sent so far (frames 1&ndash;{frame() + 1})
         </div>
 
-        <div class="flex items-center gap-2 text-[0.85rem]">
-          <span class="w-24 shrink-0 text-gray-400">Intraframe</span>
+        <div class="flex items-center gap-2 text-sm">
+          <span class="w-24 shrink-0 text-silk-dim">Intraframe</span>
           <div class="h-3 grow overflow-hidden rounded bg-background">
             <div class="h-full rounded bg-amber-500 transition-all duration-300" />
           </div>
-          <span class="w-24 shrink-0 whitespace-nowrap text-right font-mono text-white">
+          <span class="w-24 shrink-0 whitespace-nowrap text-right font-mono text-silk">
             {fmtKb(totals().intra)}
           </span>
         </div>
 
-        <div class="mt-1 flex items-center gap-2 text-[0.85rem]">
-          <span class="w-24 shrink-0 text-gray-400">Interframe</span>
+        <div class="mt-1 flex items-center gap-2 text-sm">
+          <span class="w-24 shrink-0 text-silk-dim">Interframe</span>
           <div class="h-3 grow overflow-hidden rounded bg-background">
             <div
               class="h-full rounded bg-emerald-500 transition-all duration-300"
@@ -330,13 +330,13 @@ const FrameCompression = () => {
               }}
             />
           </div>
-          <span class="w-24 shrink-0 whitespace-nowrap text-right font-mono text-white">
+          <span class="w-24 shrink-0 whitespace-nowrap text-right font-mono text-silk">
             {fmtKb(totals().inter)}
           </span>
         </div>
       </div>
 
-      <div class="mt-3 text-[0.85rem] text-gray-500">
+      <div class="mt-3 text-sm text-silk-dim">
         A full frame is re-sent every {GOP} frames so a receiver tuning in late
         has something to build on. Sizes are illustrative, not measured.
       </div>

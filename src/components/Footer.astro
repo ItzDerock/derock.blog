@@ -1,59 +1,69 @@
 ---
 import { Icon } from "astro-icon/components";
-const today = new Date();
+
+const year = new Date().getFullYear();
+
+const contacts = [
+  { href: "https://derock.dev/?ref=blog", icon: "mdi:web", label: "Portfolio" },
+  {
+    href: "https://github.com/ItzDerock",
+    icon: "fa6-brands:github",
+    label: "GitHub",
+  },
+  {
+    href: "https://discord.gg/Fbm7AeazHQ",
+    icon: "fa6-brands:discord",
+    label: "Discord",
+  },
+  {
+    href: "https://twitter.com/derockgamer",
+    icon: "fa6-brands:x-twitter",
+    label: "Twitter / X",
+  },
+  { href: "/rss.xml", icon: "mdi:rss", label: "RSS feed" },
+];
 ---
 
-<footer class="mt-16 border-t border-gray-800">
+<!-- The revision block: the stamp in the corner of every fab drawing. -->
+<footer class="mt-20 border-t border-copper/45 bg-mask-raised">
   <div
-    class="max-w-3xl mx-auto px-8 md:px-0 py-10 flex flex-row items-center justify-between gap-6"
+    class="mx-auto flex max-w-board flex-col gap-6 px-5 py-8
+           sm:flex-row sm:items-end sm:justify-between lg:px-8"
   >
-    <div>
-      <p class="text-sm font-medium text-white">derock.blog</p>
-      <p class="text-xs text-gray-500 mt-1">
-        &copy; {today.getFullYear()} Derock X. All rights reserved.
-      </p>
-    </div>
+    <dl class="grid grid-cols-[auto_1fr] gap-x-5 gap-y-1.5">
+      <dt class="legend">Sheet</dt>
+      <dd class="font-mono text-data text-silk">derock.blog</dd>
+      <dt class="legend">Author</dt>
+      <dd class="font-mono text-data text-silk">Derock X.</dd>
+      <dt class="legend">Rev</dt>
+      <dd class="font-mono text-data text-silk-dim">
+        v2 &middot; &copy; {year}
+      </dd>
+    </dl>
 
-    <div class="flex flex-row items-center gap-3">
-      <a
-        href="https://derock.dev/?ref=blog"
-        target="_blank"
-        class="text-gray-500 hover:text-white transition-colors"
-        aria-label="Portfolio"
-      >
-        <Icon name="mdi:web" size={20} />
-      </a>
-      <a
-        href="https://discord.gg/Fbm7AeazHQ"
-        target="_blank"
-        class="text-gray-500 hover:text-white transition-colors"
-        aria-label="Discord"
-      >
-        <Icon name="fa6-brands:discord" size={20} />
-      </a>
-      <a
-        href="https://twitter.com/derockgamer"
-        target="_blank"
-        class="text-gray-500 hover:text-white transition-colors"
-        aria-label="Twitter / X"
-      >
-        <Icon name="fa6-brands:x-twitter" size={20} />
-      </a>
-      <a
-        href="https://github.com/ItzDerock"
-        target="_blank"
-        class="text-gray-500 hover:text-white transition-colors"
-        aria-label="GitHub"
-      >
-        <Icon name="fa6-brands:github" size={20} />
-      </a>
-      <a
-        href="/rss.xml"
-        class="text-gray-500 hover:text-white transition-colors"
-        aria-label="RSS feed"
-      >
-        <Icon name="mdi:rss" size={20} />
-      </a>
-    </div>
+    <ul class="flex flex-row items-center gap-1.5">
+      {
+        contacts.map((contact) => (
+          <li>
+            <a
+              href={contact.href}
+              target={contact.href.startsWith("http") ? "_blank" : undefined}
+              rel={
+                contact.href.startsWith("http")
+                  ? "noopener noreferrer"
+                  : undefined
+              }
+              aria-label={contact.label}
+              title={contact.label}
+              class="flex h-9 w-9 items-center justify-center rounded-pad
+                     border border-silk-faint/35 text-silk-dim
+                     transition-colors hover:border-gold hover:text-gold"
+            >
+              <Icon name={contact.icon} size={17} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </footer>

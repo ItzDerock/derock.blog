@@ -1,15 +1,20 @@
-/* custom overrides for comentario */
+/* Comentario, dressed as a part on the board. */
 .comentario-footer {
   display: none !important;
 }
 
 .comentario-add-comment-host {
-  border: 1px solid theme("colors.gray.800") !important;
+  border: 1px solid theme("colors.silk.faint / 35%") !important;
+  border-radius: theme("borderRadius.part") !important;
 }
 
 comentario-comments[theme="dark"] {
-  --cmntr-bg: theme("colors.card.background") !important;
-  --cmntr-bg-highlight: theme("colors.card.background") !important;
-  --cmntr-muted-color: theme("colors.gray.400") !important;
-  --cmntr-btn-bg: theme("colors.blue.400") !important;
+  --cmntr-bg: theme("colors.mask.DEFAULT") !important;
+  --cmntr-bg-highlight: theme("colors.mask.raised") !important;
+  --cmntr-color: theme("colors.silk.DEFAULT") !important;
+  --cmntr-muted-color: theme("colors.silk.dim") !important;
+  --cmntr-link-color: theme("colors.gold.DEFAULT") !important;
+  --cmntr-btn-bg: theme("colors.gold.DEFAULT") !important;
+  --cmntr-btn-color: theme("colors.mask.deep") !important;
+  --cmntr-border-color: theme("colors.silk.faint / 35%") !important;
 }

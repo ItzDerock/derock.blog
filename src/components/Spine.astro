@@ -1,0 +1,167 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+// The spine carries the document's own section headings. It invents nothing.
+//
+// Posts here don't agree on a level: some open sections with `#`, others with
+// `##`. So the net level is whatever the shallowest heading in this document
+// is, which is that document's own idea of a section.
+const { headings } = Astro.props;
+const topDepth = headings.length
+  ? Math.min(...headings.map((heading) => heading.depth))
+  : 0;
+const nets = headings.filter((heading) => heading.depth === topDepth);
+---
+
+{
+  nets.length > 1 && (
+    <>
+      {/* Desktop: a copper trace down the gutter, each section a labelled net. */}
+      <nav
+        class="spine sticky top-24 hidden self-start lg:block"
+        aria-label="Sections"
+        data-spine
+      >
+        <p class="legend mb-3 text-copper-light">Contents</p>
+
+        <div class="relative pl-4">
+          {/* the unrouted trace, and the routed length over it */}
+          <span
+            aria-hidden="true"
+            class="absolute bottom-0 left-0 top-1 w-px bg-copper-deep"
+          />
+          <span
+            aria-hidden="true"
+            data-spine-route
+            class="absolute left-0 top-1 w-px origin-top bg-copper"
+            style="height: 100%; transform: scaleY(var(--route, 0));"
+          />
+
+          <ul class="flex flex-col gap-2.5">
+            {nets.map((net) => (
+              <li class="relative">
+                <span
+                  aria-hidden="true"
+                  data-net-pad
+                  class="absolute -left-4 top-[0.42rem] h-1.5 w-1.5 -translate-x-1/2
+                         rounded-[1px] border border-copper bg-mask
+                         transition-colors duration-150"
+                />
+                <a
+                  href={`#${net.slug}`}
+                  data-net={net.slug}
+                  class="block font-mono text-legend leading-snug text-silk-dim
+                         no-underline transition-colors hover:text-silk"
+                >
+                  {net.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+
+      {/* Small screens: the same nets, folded into a strip. */}
+      <details class="zone mb-8 px-4 py-3 lg:hidden">
+        <summary class="legend cursor-pointer text-copper-light marker:text-copper-light">
+          Contents &middot; {nets.length} sections
+        </summary>
+        <ul class="mt-3 flex flex-col gap-2 border-l border-copper-deep pl-4">
+          {nets.map((net) => (
+            <li>
+              <a
+                href={`#${net.slug}`}
+                class="block font-mono text-legend leading-snug text-silk-dim no-underline"
+              >
+                {net.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </>
+  )
+}
+
+<script>
+  const spine = document.querySelector<HTMLElement>("[data-spine]");
+
+  if (spine) {
+    const route = spine.querySelector<HTMLElement>("[data-spine-route]");
+    const links = Array.from(
+      spine.querySelectorAll<HTMLAnchorElement>("[data-net]")
+    );
+    const article = document.querySelector<HTMLElement>("[data-article]");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const sections = links
+      .map((link) => {
+        const id = link.dataset.net;
+        const heading = id ? document.getElementById(id) : null;
+        const pad = link.parentElement?.querySelector<HTMLElement>(
+          "[data-net-pad]"
+        );
+        return heading && pad ? { link, heading, pad } : null;
+      })
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+
+    const setActive = (index: number) => {
+      sections.forEach((section, i) => {
+        const active = i === index;
+        section.link.classList.toggle("text-gold", active);
+        section.link.classList.toggle("text-silk-dim", !active);
+        section.pad.classList.toggle("bg-gold", active);
+        section.pad.classList.toggle("border-gold", active);
+        section.pad.classList.toggle("bg-mask", !active);
+        section.pad.classList.toggle("border-copper", !active);
+        if (active) section.link.setAttribute("aria-current", "true");
+        else section.link.removeAttribute("aria-current");
+      });
+    };
+
+    // The trace routes downward as the article is read. Reduced motion gets
+    // the finished routing immediately.
+    const paint = () => {
+      if (!article) return;
+
+      if (reduced.matches) {
+        route?.style.setProperty("--route", "1");
+      } else {
+        const start = article.offsetTop;
+        const travel = Math.max(article.offsetHeight - window.innerHeight, 1);
+        const progress = (window.scrollY - start + window.innerHeight * 0.4) / travel;
+        route?.style.setProperty(
+          "--route",
+          String(Math.min(Math.max(progress, 0), 1))
+        );
+      }
+
+      // The active net is the last heading whose top has passed the fold line.
+      // Nothing is active until the reader actually reaches the first section.
+      const fold = window.scrollY + window.innerHeight * 0.28;
+      let index = -1;
+      sections.forEach((section, i) => {
+        if (section.heading.offsetTop <= fold) index = i;
+      });
+      setActive(index);
+    };
+
+    let queued = false;
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        paint();
+      });
+    };
+
+    paint();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+  }
+</script>
