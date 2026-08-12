@@ -2,6 +2,7 @@
 import { Icon } from "astro-icon/components";
 
 const year = new Date().getFullYear();
+const commitSha = process.env.VERCEL_GIT_COMMIT_SHA;
 
 const contacts = [
   { href: "https://derock.dev/?ref=blog", icon: "mdi:web", label: "Portfolio" },
@@ -30,16 +31,20 @@ const contacts = [
     class="mx-auto flex max-w-board flex-col gap-6 px-5 py-8
            sm:flex-row sm:items-end sm:justify-between lg:px-8"
   >
-    <dl class="grid grid-cols-[auto_1fr] gap-x-5 gap-y-1.5">
-      <dt class="legend">Sheet</dt>
+    <dl class="grid grid-cols-[auto_1fr] gap-x-5 gap-y-1.5 align-middle">
+      <dt class="legend leading-relaxed">Sheet</dt>
       <dd class="font-mono text-data text-silk">derock.blog</dd>
-      <dt class="legend">Author</dt>
+      <dt class="legend leading-relaxed">Author</dt>
       <dd class="font-mono text-data text-silk">Derock X.</dd>
-      <dt class="legend">Rev</dt>
+      <dt class="legend leading-relaxed">Rev</dt>
       <dd class="font-mono text-data text-silk-dim">
-        v2 &middot; &copy; {year}
+        v2 {commitSha && `· ${commitSha.slice(0, 6)}`}
       </dd>
     </dl>
+
+    <p class="legend">
+      &copy; {year} Derock X.
+    </p>
 
     <ul class="flex flex-row items-center gap-1.5">
       {

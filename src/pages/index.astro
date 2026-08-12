@@ -6,7 +6,9 @@ import Zone from "../components/Zone.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import RootLayout from "../layouts/RootLayout.astro";
 
-const recentPosts = (await getPublished("blog")).slice(0, 3);
+const allPosts = await getPublished("blog");
+const recentPosts = allPosts.slice(0, 3);
+const morePosts = allPosts.length - recentPosts.length;
 const recentBits = (await getPublished("bits")).slice(0, 3);
 ---
 
@@ -24,10 +26,9 @@ const recentBits = (await getPublished("bits")).slice(0, 3);
 
       <h1 class="font-display text-3xl font-bold text-silk">Derock X.</h1>
       <p class="mt-2.5 max-w-[46ch] text-silk-dim">
-        I build things that have to survive contact with the real world: a
-        3.4&nbsp;GHz video downlink for a rocket, competition robots, a home
-        server rack, the occasional CTF flag. This is where I write down how
-        they work.
+        I like to build things, and afterwards, I like to write about them.
+        Electrical Engineer & Computer Science student, self-proclamed hacker.
+        Big into open-source and tech independence.
       </p>
       <p class="mt-4">
         <a href="https://derock.dev/?ref=blog" class="pad font-mono text-data">
@@ -36,12 +37,35 @@ const recentBits = (await getPublished("bits")).slice(0, 3);
       </p>
     </section>
 
-    <Zone label="Recent posts" href="/posts" linkLabel="all posts" class="mb-14">
+    <Zone
+      label="Recent posts"
+      href="/posts"
+      linkLabel="all posts"
+      class="mb-14"
+    >
       <div class="flex flex-col gap-4">
+        {recentPosts.map((post, i) => <PostRow blog={post} lead={i === 0} />)}
+
+        <!--
+          The rule-top link alone let readers stop at three and conclude that
+          was the whole board. This is the next footprint in the column,
+          drawn but unpopulated: same width and rhythm as a PostRow, hairline
+          dashed instead of seated, so it reads as "the run continues" rather
+          than as a fourth post.
+        -->
         {
-          recentPosts.map((post, i) => (
-            <PostRow blog={post} lead={i === 0} />
-          ))
+          morePosts > 0 && (
+            <a href="/posts" class="group block no-underline">
+              <div class="zone flex items-center justify-between gap-3 border-dashed px-5 py-4 transition-colors group-hover:border-copper">
+                <span class="legend text-silk transition-colors group-hover:text-gold">
+                  + {morePosts} more post{morePosts === 1 ? "" : "s"}
+                </span>
+                <span class="designator transition-colors group-hover:text-gold-bright">
+                  read all &rarr;
+                </span>
+              </div>
+            </a>
+          )
         }
       </div>
     </Zone>
