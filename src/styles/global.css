@@ -266,13 +266,17 @@
   @apply max-w-media;
 }
 
+/* Preflight resets headings to `font-weight: inherit`, which left every
+   in-post heading at body weight while the post title above them sets in
+   Atkinson Bold. Weight is what separates a heading from a paragraph once the
+   accent is spent, so it is restored here for the whole ramp. */
 .post h1,
 .post h2,
 .post h3,
 .post h4,
 .post h5,
 .post h6 {
-  @apply font-display text-silk scroll-mt-24;
+  @apply font-display font-bold text-silk scroll-mt-24;
   text-wrap: balance;
 }
 
@@ -493,10 +497,12 @@ dialog[data-probe-dialog]::backdrop {
   @apply mb-7;
 }
 
-/* The filename plate reads as a silkscreen legend, not a browser tab. */
+/* The filename plate reads as a silkscreen legend, not a browser tab - but it
+   carries a path, and paths are case-sensitive. Legend treatment here is the
+   mono face and the tracking only; uppercasing would print a filename that
+   does not exist. */
 .post .expressive-code .frame .header {
   letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .post .expressive-code figcaption + pre,
