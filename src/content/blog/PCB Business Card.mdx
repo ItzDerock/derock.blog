@@ -1,0 +1,93 @@
+---
+title: "PCB Business Card"
+description:
+  "Business card that acts as a spectrum analyzer and ble sniffer with built in
+  NFC."
+pubDate: "August 1, 2026"
+heroImage: "/thumbs/pcb business card.webp"
+tags: ["ee", "kicad", "rust"]
+---
+
+import { Image } from "astro:assets";
+
+How do you stand out in a recruitment cycle? Companies get thousands of
+applicants, many being very qualified. As an applicant, you spend hours writing
+short answer responses, re-filling in your education and personal background,
+just for the company to maybe respond in a week, or a month, or months, or even
+over half a year later. Do this x100 times, and it gets tiring really quickly.
+
+You can talk to recruiters at recruitment events, but end up waiting in a long
+line of other applicants to get your two minutes of fame with the recruiter. And
+when you finally get to talk, they take your resume and place it on top of tens
+of others on their clipboard, each glowing under the dim gym lights with
+different parts marked up with a highlighter. You made your resume purposefully
+boring in style, because you know, at the end of the day, they'll just run this
+through a scanner and feed it to an ATS reader for some LLM to judge. A few
+applicants later, and you can only hope the recruiter still knows your name.
+This is not the fault of the recruiter or company, there are just so many
+applicants these days.
+
+There's not a lot of room for creativity. Resumes and CV's have quite a standard
+format, and are made to be information dense: **10x tokens saved** after
+creating novel **LLM harness** to manage Agile workflows bla bla bla... This is
+what I thought, until I saw a YouTube video about a custom PCB business card,
+and started researching into this.
+
+[TODO: grid of thumbnails here]
+
+So you're saying I get to, not only show off my engineering skills, but work the
+right side of my brain and add in my own creative mix? Sign me up! No PCB
+business card is the same, each a reflection of the engineer's interest, so to
+that end, I spent quite a bit of time pondering on what I wanted to build.
+
+## so.. what does it do?
+
+It's a spectrum analyzer. The array of 8 LEDs divide up the 2.4GHz spectrum
+band, and glow according to how much power is on each band. Start playing some
+music over Bluetooth, and you'll see more activity over the Bluetooth portion of
+the spectrum. You can get a sense of how much noise some WiFi channels have to
+help pick the right 2.4GHz band. The microprocessor on the board also supports
+Bluetooth, so plug it into your laptop and start using it to sniff or send BLE
+packets. With GPIO and ST-Link broken out, you can reflash this board and use it
+as a battery-operated microcontroller for an IoT project.
+
+There is a NFC coil on the front, so you can tap the card to see who made it
+(me!). A ruler on the back for quick measurements, alongside common SMD
+footprints so you can gauge how much space an IC will take. And, of course, a
+cat to remind you about the species that actually rules the world.
+
+[todo: image of the back]
+
+The board contains two small trace antenna and a Nordic nRF52840. One antenna is
+tuned for NFC at 13.56MHz, with the other antenna tuned for 2.4GHz. The nRF52840
+supports a range of 2360MHz to 2500MHz across multiple protocols: Bluetooth Low
+Energy (BLE), Bluetooth mesh, Thread, Zigbee, IEEE 802.15.4, ANT/ANT+, and
+Nordic's proprietary 2.4GHz wireless protocols.
+
+The IEEE 802.15.4 support is what allows for this board to run as a crude
+spectrum analyzer, as the standard requires the radio to perform RSSI detection
+on a channel to find the one with least interference. For the card, I used that
+energy detect function to measure the energy within 5MHz channel buckets.
+
+## why
+
+## how (hardware)
+
+I started with deciding what microcontroller to use, and needed something super
+low power. ESP32s and RP2040/2042 W are quite efficient chips with wireless, but
+still not efficient enough, since the CR2032 coincell battery only has a
+capacity of around 230mAh. When you need efficiency, you go nordic. They make
+some seriously efficient chips, with the nrf52840 only needing like 5-10mAh
+during radio transmissions compared to the esp32 family which need around 10x
+that. Same goes for sleep, an ESP32 typically draws 5-10uA compared to nrf52840
+with only 0.5uA of deep sleep current draw. The nrf52840 also supports NFC so I
+can save some components on the BOM.
+
+I had actually initially spec'd the nrf52832, but found that availability for
+the nrf52840 was much better with my PCBA supplier (JLC) while being only
+margionally cheaper, so I swapped to the bigger nRF52840.
+
+I started by copying Nordic's reference schematic, and created a basic LED
+array,
+
+## how (firmware)
