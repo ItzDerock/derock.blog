@@ -15,9 +15,9 @@ import LedScheduling from "../../components/specialties/LedScheduling/LedSchedul
 
 How do you stand out in a recruitment cycle? Companies get thousands of
 applicants, many being very qualified. As an applicant, you spend hours writing
-short answer responses, re-entering your education and personal background,
-just for the company to maybe respond in a week, or a month, or months, or even
-over half a year later. Do this x100 times, and it gets tiring really quickly.
+short answer responses, re-entering your education and personal background, just
+for the company to maybe respond in a week, or a month, or months, or even over
+half a year later. Do this x100 times, and it gets tiring really quickly.
 
 You can talk to recruiters at recruitment events, but end up waiting in a long
 line of other applicants to get your two minutes of fame with the recruiter. And
@@ -61,15 +61,15 @@ cat to remind you about the species that actually rules the world.
 
 ![Back of my card, with a cat in silkscreen, extra GPIO, and a ruler](<../../images/PCB Business Card/card-back.webp>)
 
-The board contains two small trace antennas and a Nordic nRF52840. One antenna is
-tuned for NFC at 13.56MHz, with the other antenna tuned for 2.4GHz. The nRF52840
-supports a range of 2360MHz to 2500MHz across multiple protocols: Bluetooth Low
-Energy (BLE), Bluetooth mesh, Thread, Zigbee, IEEE 802.15.4, ANT/ANT+, and
-Nordic's proprietary 2.4GHz wireless protocols.
+The board contains two small trace antennas and a Nordic nRF52840. One antenna
+is tuned for NFC at 13.56MHz, with the other antenna tuned for 2.4GHz. The
+nRF52840 supports a range of 2360MHz to 2500MHz across multiple protocols:
+Bluetooth Low Energy (BLE), Bluetooth mesh, Thread, Zigbee, IEEE 802.15.4,
+ANT/ANT+, and Nordic's proprietary 2.4GHz wireless protocols.
 
-The IEEE 802.15.4 support is what allows this board to run as a crude
-spectrum analyzer, as the standard requires the radio to perform RSSI detection
-on a channel to find the one with the least interference. For the card, I used that
+The IEEE 802.15.4 support is what allows this board to run as a crude spectrum
+analyzer, as the standard requires the radio to perform RSSI detection on a
+channel to find the one with the least interference. For the card, I used that
 energy detect function to measure the energy within 5MHz channel buckets.
 
 ## why
@@ -88,29 +88,23 @@ a Bluetooth sniffer to attack a storage locker.
 So naturally, my mind went towards a spectrum analyzer, enabling card wielders
 to see the invisible radio signals that allow Bluetooth, WiFi, and other
 appliances to work. And it's interactive, in that you can start a download over
-2.4GHz WiFi, or start using your Bluetooth earbuds, and the corresponding
-lights will jump to life.
+2.4GHz WiFi, or start using your Bluetooth earbuds, and the corresponding lights
+will jump to life.
 
 ## how (hardware)
 
 I started with deciding what microcontroller to use, and needed something super
-low power. ESP32s are quite efficient chips with wireless,
-but still not efficient enough, since the CR2032 coin cell battery only has a
-capacity of around 230mAh. When you need efficiency, you go Nordic. They make
-some seriously efficient chips, with the nRF52840 only needing like 5-10mA
-during radio transmissions compared to the ESP32 family, which needs around 10x
-that. Same goes for sleep, an ESP32 typically draws 5-10uA compared to nRF52840
-with only 0.5uA of deep sleep current draw. The nRF52840 also supports NFC so I
-can save some components on the BOM.
-
-I had actually initially spec'd the nRF52832, but found that availability for
-the nRF52840 was much better with my PCBA supplier (JLC), so I swapped to the
-bigger nRF52840.
+low power. ESP32s are quite efficient chips with wireless, but still not
+efficient enough, since the CR2032 coin cell battery only has a capacity of
+around 230mAh. When you need efficiency, you go Nordic. They make some seriously
+efficient chips, with the nRF52840 only needing like 5-10mA during radio
+transmissions compared to the ESP32 family, which needs around 10x that. Same
+goes for sleep, an ESP32 typically draws 5-10uA compared to nRF52840 with only
+0.5uA of deep sleep current draw. The nRF52840 also supports NFC so I can save
+some components on the BOM.
 
 The schematic was quite straightforward. I started with the example schematic
-provided by Nordic in the datasheet, and created a very simple LED array. I
-won't bore you with too much detail, except I will highlight a few design
-decisions.
+provided by Nordic in the datasheet, and created a simple LED array.
 
 {/* kicad plot -> svg -> svgo, but big. so svg -> -density 400 conversion to webp */}
 ![The main page of the schematic](<../../images/PCB Business Card/schematic.webp>)
@@ -159,10 +153,9 @@ Turns out batteries can get really, really small.
 ![These things are THINNN, from [lipolbattery.com][lipolbattery]](<../../images/PCB Business Card/ultra-thin-lipo.png>)
 
 That battery is 0.4mm thin; zero. point. four... While I couldn't find discharge
-numbers for these specific batteries, generally they are anywhere
-from 0.5C to 1C, which equates to around 15mA to 30mA for their 30mAh battery.
-Again, current is better, but the capacity maxes out at 30mAh for their 0.4mm
-thin batteries.
+numbers for these specific batteries, generally they are anywhere from 0.5C to
+1C, which equates to around 15mA to 30mA for their 30mAh battery. Again, current
+is better, but the capacity maxes out at 30mAh for their 0.4mm thin batteries.
 
 | Part Num | Capacity (mAh) | thickness (mm) |
 | -------- | -------------- | -------------- |
@@ -215,14 +208,17 @@ current, maxing out at 1C. Standard cells are 45mAh so this means ~9-20mA of
 standard current, with peaks of 45mA.
 
 And these have the benefit of being surrounded by a hard shell, so they're
-safer, but they only have a capacity of 45mAh.
+safer, but they only have a capacity of 45mAh. Furthermore, designing around
+this as a requirement may lead to cases in the future when a user swaps the
+battery, not knowing it must be lithium-ion, and end up confused as why the
+board will not function.
 
 ### two batteries
 
-The solution I landed on was to just use two CR2032 batteries (wired in parallel)
-and some smart light scheduling to reduce the current draw. I'll go over this in
-more detail in the firmware section. Optionally, an LR2032 battery can be used;
-the circuitry allows for the higher voltage of those cells.
+The solution I landed on was to just use two CR2032 batteries (wired in
+parallel) and some smart light scheduling to reduce the current draw. I'll go
+over this in more detail in the firmware section. Optionally, an LR2032 battery
+can be used; the circuitry allows for the higher voltage of those cells.
 
 ### the power mux
 
@@ -264,11 +260,12 @@ needing that (thankfully!).
 </figure>
 
 The nRF52840 has a built-in LDO to drop voltage, with a register to control the
-output voltage. This allows the board to take up to 5V without needing an
-external LDO, but the internal one does add a voltage drop, which will affect
-battery life. Other than that, the board is quite simple. A 3-pole switch to
-choose the mode (off, slow scan, fast scan). A USB port with a TVS diode. Some
-exposed GPIOs so this card can be repurposed as a general MCU.
+output voltage. For those unaware, an LDO is akin to a variable resistor with
+the goal of maintaining a lower output voltage. The chip operates on 1.3V-3.3V,
+and this LDO allows the board to take up to 5V without needing external
+circuitry. Other than that, the board is quite simple. A 3-pole switch to choose
+the mode (off, slow scan, fast scan). A USB port with a TVS diode. Some exposed
+GPIOs so this card can be repurposed as a general MCU.
 
 ## board layout
 
@@ -276,9 +273,9 @@ The layout is also quite simple. I started with the RF antenna, using TI's
 SWRA117D trace antenna, placing it at the corner of the card. I then oriented
 the nRF52840 so that its antenna pin has a straight uninterrupted path to the
 antenna, simplifying the RF engineering required, and used JLC's impedance
-calculator to figure out the required trace width for a $50\,\Omega$ transmission
-line. The matching network was the reference one given by Nordic in their
-documentation, as I do not own a VNA to characterize these boards.
+calculator to figure out the required trace width for a $50\,\Omega$
+transmission line. The matching network was the reference one given by Nordic in
+their documentation, as I do not own a VNA to characterize these boards.
 
 ![View of the board layout](<../../images/PCB Business Card/board-layout.png>)
 
@@ -298,8 +295,8 @@ predictable impedance.
 ## silkscreening
 
 KiCad's silkscreen drawing tools are quite limited, so I used Inkscape to draw
-the silkscreen and imported it as an SVG into KiCad. I selected a black substrate
-on JLC, and white for the silkscreen.
+the silkscreen and imported it as an SVG into KiCad. I selected a black
+substrate on JLC, and white for the silkscreen.
 
 To get a gold finish on my name, I typed my name out and used it to create a
 fill, not connected to anything. Normal finish is silver, so I opted for an ENIG
@@ -469,11 +466,11 @@ fn schedule_phases<const N: usize>(buckets: [usize; N]) -> [(usize, usize); N] {
 ```
 
 One consideration must be made though. We (humans) do not perceive brightness in
-a linear manner, instead following a logarithmic curve. A linear 20% duty compared
-to 40% does not result in us seeing the second as double the brightness.
-Following the CIE 1931 curve, this results in a jump from perceived lightness of
-$L = 51.8$ to $L = 69.5$, so to get the display to look correct, we must correct
-for this human limitation.
+a linear manner, instead following a logarithmic curve. A linear 20% duty
+compared to 40% does not result in us seeing the second as double the
+brightness. Following the CIE 1931 curve, this results in a jump from perceived
+lightness of $L = 51.8$ to $L = 69.5$, so to get the display to look correct, we
+must correct for this human limitation.
 
 ```rs title="led.rs"
 /// Translates a linear relationship to perceived human brightness
@@ -550,8 +547,8 @@ through JLC: the battery holder, and the switch. I purchased those from Mouser.
 
 Overall, this is a 10/10 project. This is my first time building a board
 handling RF, so I got a lot of experience handling layout and running all the
-required calculations. I also got more experience with Embassy and Rust, and can say that
-I am quite Rust-pilled. And I love that I have a cool board I can show off to
-people.
+required calculations. I also got more experience with Embassy and Rust, and can
+say that I am quite Rust-pilled. And I love that I have a cool board I can show
+off to people.
 
 [lipolbattery]: https://www.lipolbattery.com/Ultra-Thin-LiPo-Battery.html
