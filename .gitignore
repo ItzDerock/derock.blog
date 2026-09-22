@@ -33,3 +33,4 @@ devenv.local.nix
 
 # impeccable local state (live-session journals)
 .impeccable/
+.commandcode/
